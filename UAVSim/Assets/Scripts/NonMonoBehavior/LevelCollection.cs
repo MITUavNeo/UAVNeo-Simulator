@@ -91,6 +91,21 @@ public class LevelCollection
 
         new LevelCollection()
         {
+            DisplayName = "UAV GRG Labs",
+            ShortName = "GRG",
+            Levels = new LevelInfo[]
+            {
+                new LevelInfo()
+                {
+                    DisplayName = "Module 1 - Hello Drone",
+                    BuildIndex = 142,
+                    HelpMessage = "Take off, hover, and explore! Use the colored cones to orient yourself - Red=North, Blue=East, Green=South, Yellow=West."
+                },
+            }
+        },
+
+        new LevelCollection()
+        {
             DisplayName = "Final Challenge",
             ShortName = "Final",
             Levels = new LevelInfo[]

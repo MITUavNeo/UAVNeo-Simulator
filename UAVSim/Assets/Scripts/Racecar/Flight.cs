@@ -316,7 +316,7 @@ public class Flight : RacecarModule
         TargetAltitude = this.transform.position.y + launchAltitude;
 
         // Zero out all velocity and force level attitude so launch goes straight up
-        this.rBody.velocity = Vector3.zero;
+        this.rBody.linearVelocity = Vector3.zero;
         this.rBody.angularVelocity = Vector3.zero;
         this.transform.rotation = Quaternion.Euler(0f, this.transform.eulerAngles.y, 0f);
 
@@ -336,7 +336,7 @@ public class Flight : RacecarModule
         TargetAltitude = this.transform.position.y + launchAltitude;
 
         // Clean start for relaunch
-        this.rBody.velocity = Vector3.zero;
+        this.rBody.linearVelocity = Vector3.zero;
         this.rBody.angularVelocity = Vector3.zero;
 
         Debug.Log($"[Flight] Relaunching to altitude {TargetAltitude:F1}m");
@@ -383,7 +383,7 @@ public class Flight : RacecarModule
         this.StrafeSpeed = 0;
         this.VerticalSpeed = 0;
         this.YawSpeed = 0;
-        this.rBody.velocity = Vector3.zero;
+        this.rBody.linearVelocity = Vector3.zero;
         this.rBody.angularVelocity = Vector3.zero;
         for (int i = 0; i < 4; i++) this.MotorSpeeds[i] = 0f;
         Debug.Log("[Flight] Landed and disarmed");
@@ -453,8 +453,8 @@ public class Flight : RacecarModule
     {
         // === Configure Rigidbody for accurate physics ===
         this.rBody.useGravity = true;
-        this.rBody.drag = 0f;
-        this.rBody.angularDrag = 0.02f;
+        this.rBody.linearDamping = 0f;
+        this.rBody.angularDamping = 0.02f;
 
         // Explicitly set center of mass at the transform origin.
         // Without this, Unity computes CoM from the collider shape, which can
@@ -493,7 +493,7 @@ public class Flight : RacecarModule
         if (IsLanding)
         {
             float altAboveTarget = this.transform.position.y - TargetAltitude;
-            float vertSpeed = Mathf.Abs(this.rBody.velocity.y);
+            float vertSpeed = Mathf.Abs(this.rBody.linearVelocity.y);
 
             // Landed: close to target surface and barely moving vertically
             if (altAboveTarget < 0.3f && vertSpeed < 0.3f)
@@ -541,9 +541,14 @@ public class Flight : RacecarModule
         }
 
         // ================================================================
-        // 2b. LAUNCH STABILIZATION: force level attitude during ascent
-        //     If user provides any horizontal input, end launch phase early
-        //     so they can take over immediately.
+        // 2b. LAUNCH STABILIZATION: kinematic ascent to target altitude.
+        //     Bypasses the physics engine entirely — directly sets position,
+        //     rotation, and velocity each frame. This eliminates the
+        //     limit-cycle oscillation caused by MoveRotation fighting motor
+        //     torques on a non-kinematic Rigidbody.
+        //
+        //     If the user provides any horizontal input, launch ends early
+        //     and normal motor-mixing takes over immediately.
         // ================================================================
         if (IsLaunching)
         {
@@ -552,14 +557,41 @@ public class Flight : RacecarModule
             {
                 IsLaunching = false;
                 Debug.Log("[Flight] User took over during launch — exiting launch stabilization");
+                // Fall through to normal motor mixing below
             }
             else
             {
-                // Lock pitch and roll to zero, preserve yaw heading.
+                float altError = TargetAltitude - this.transform.position.y;
+                float vertVel = this.rBody.linearVelocity.y;
+
+                // Kinematic ascent: move drone directly upward, no physics forces
+                float launchSpeed = Mathf.Clamp(altError * Kp_alt - vertVel * Kd_alt, -maxVerticalThrustFraction * 5f, maxVerticalThrustFraction * 5f);
+                Vector3 newPos = this.transform.position + Vector3.up * launchSpeed * Time.fixedDeltaTime;
+
+                // Lock attitude flat at current yaw — directly set transform, no physics
                 float currentYaw = this.transform.eulerAngles.y;
-                this.rBody.MoveRotation(Quaternion.Euler(0f, currentYaw, 0f));
-                Vector3 av = this.rBody.angularVelocity;
-                this.rBody.angularVelocity = new Vector3(0f, av.y, 0f);
+                this.rBody.Move(newPos, Quaternion.Euler(0f, currentYaw, 0f));
+
+                // Zero all physics velocities so no residual momentum fights us
+                this.rBody.linearVelocity = new Vector3(0f, launchSpeed, 0f);
+                this.rBody.angularVelocity = Vector3.zero;
+
+                // Display symmetric motor speeds for telemetry only
+                float launchGravity = Physics.gravity.magnitude;
+                float launchHoverThrust = this.rBody.mass * launchGravity;
+                float launchThrustPerMotor = launchHoverThrust / 4f;
+                float launchOmega = Mathf.Clamp(Mathf.Sqrt(launchThrustPerMotor / kf), motorSpeedMin, motorSpeedMax);
+                for (int i = 0; i < 4; i++) this.MotorSpeeds[i] = launchOmega;
+
+                // Check if launch is complete
+                if (Mathf.Abs(altError) < 0.5f && Mathf.Abs(vertVel) < 0.5f)
+                {
+                    IsLaunching = false;
+                    TargetAltitude = this.transform.position.y;
+                    Debug.Log("[Flight] Launch complete - entering altitude hold");
+                }
+
+                return; // Skip motor mixing — kinematic launch handles everything
             }
         }
 
@@ -576,7 +608,7 @@ public class Flight : RacecarModule
         if (noHorizontalInput && !pureVerticalFlight)
         {
             // Convert world velocity to body-frame horizontal components
-            Vector3 localVel = this.transform.InverseTransformDirection(this.rBody.velocity);
+            Vector3 localVel = this.transform.InverseTransformDirection(this.rBody.linearVelocity);
 
             // Oppose forward velocity with pitch, lateral velocity with roll
             // localVel.z = forward speed in body frame, localVel.x = right speed
@@ -623,7 +655,7 @@ public class Flight : RacecarModule
         {
             // PD altitude hold: maintain TargetAltitude
             float altError = TargetAltitude - this.transform.position.y;
-            float vertVel = this.rBody.velocity.y;
+            float vertVel = this.rBody.linearVelocity.y;
 
             float altFraction = Kp_alt * altError - Kd_alt * vertVel;
             altFraction = Mathf.Clamp(altFraction, -maxVerticalThrustFraction, maxVerticalThrustFraction);
@@ -771,7 +803,7 @@ public class Flight : RacecarModule
         //    instantly → razor-sharp direction changes.
         // Vertical drag remains simple linear.
 
-        Vector3 vel = this.rBody.velocity;
+        Vector3 vel = this.rBody.linearVelocity;
         float hSpeed = Mathf.Sqrt(vel.x * vel.x + vel.z * vel.z);
         Vector3 dragForce;
 
@@ -783,8 +815,8 @@ public class Flight : RacecarModule
             // Dead zone: snap to zero when nearly stopped
             if (hSpeed < posHoldDeadZone)
             {
-                this.rBody.velocity = new Vector3(0f, vel.y, 0f);
-                vel = this.rBody.velocity;
+                this.rBody.linearVelocity = new Vector3(0f, vel.y, 0f);
+                vel = this.rBody.linearVelocity;
             }
 
             dragForce = new Vector3(
@@ -845,14 +877,14 @@ public class Flight : RacecarModule
         // ================================================================
         if (Mathf.Abs(this.YawSpeed) > 0.05f)
         {
-            Vector3 currentVel = this.rBody.velocity;
+            Vector3 currentVel = this.rBody.linearVelocity;
             float hSpeedSq = currentVel.x * currentVel.x + currentVel.z * currentVel.z;
             if (hSpeedSq > 0.1f)
             {
                 float yawDeltaDeg = desiredYawRate * Mathf.Rad2Deg * Time.fixedDeltaTime;
                 Vector3 hVel = new Vector3(currentVel.x, 0f, currentVel.z);
                 Vector3 rotatedHVel = Quaternion.Euler(0f, yawDeltaDeg, 0f) * hVel;
-                this.rBody.velocity = new Vector3(rotatedHVel.x, currentVel.y, rotatedHVel.z);
+                this.rBody.linearVelocity = new Vector3(rotatedHVel.x, currentVel.y, rotatedHVel.z);
             }
         }
     }
