@@ -541,9 +541,14 @@ public class Flight : RacecarModule
         }
 
         // ================================================================
-        // 2b. LAUNCH STABILIZATION: force level attitude during ascent
-        //     If user provides any horizontal input, end launch phase early
-        //     so they can take over immediately.
+        // 2b. LAUNCH STABILIZATION: kinematic ascent to target altitude.
+        //     Bypasses the physics engine entirely — directly sets position,
+        //     rotation, and velocity each frame. This eliminates the
+        //     limit-cycle oscillation caused by MoveRotation fighting motor
+        //     torques on a non-kinematic Rigidbody.
+        //
+        //     If the user provides any horizontal input, launch ends early
+        //     and normal motor-mixing takes over immediately.
         // ================================================================
         if (IsLaunching)
         {
@@ -552,14 +557,41 @@ public class Flight : RacecarModule
             {
                 IsLaunching = false;
                 Debug.Log("[Flight] User took over during launch — exiting launch stabilization");
+                // Fall through to normal motor mixing below
             }
             else
             {
-                // Lock pitch and roll to zero, preserve yaw heading.
+                float altError = TargetAltitude - this.transform.position.y;
+                float vertVel = this.rBody.velocity.y;
+
+                // Kinematic ascent: move drone directly upward, no physics forces
+                float launchSpeed = Mathf.Clamp(altError * Kp_alt - vertVel * Kd_alt, -maxVerticalThrustFraction * 5f, maxVerticalThrustFraction * 5f);
+                Vector3 newPos = this.transform.position + Vector3.up * launchSpeed * Time.fixedDeltaTime;
+
+                // Lock attitude flat at current yaw — directly set transform, no physics
                 float currentYaw = this.transform.eulerAngles.y;
-                this.rBody.MoveRotation(Quaternion.Euler(0f, currentYaw, 0f));
-                Vector3 av = this.rBody.angularVelocity;
-                this.rBody.angularVelocity = new Vector3(0f, av.y, 0f);
+                this.rBody.Move(newPos, Quaternion.Euler(0f, currentYaw, 0f));
+
+                // Zero all physics velocities so no residual momentum fights us
+                this.rBody.velocity = new Vector3(0f, launchSpeed, 0f);
+                this.rBody.angularVelocity = Vector3.zero;
+
+                // Display symmetric motor speeds for telemetry only
+                float launchGravity = Physics.gravity.magnitude;
+                float launchHoverThrust = this.rBody.mass * launchGravity;
+                float launchThrustPerMotor = launchHoverThrust / 4f;
+                float launchOmega = Mathf.Clamp(Mathf.Sqrt(launchThrustPerMotor / kf), motorSpeedMin, motorSpeedMax);
+                for (int i = 0; i < 4; i++) this.MotorSpeeds[i] = launchOmega;
+
+                // Check if launch is complete
+                if (Mathf.Abs(altError) < 0.5f && Mathf.Abs(vertVel) < 0.5f)
+                {
+                    IsLaunching = false;
+                    TargetAltitude = this.transform.position.y;
+                    Debug.Log("[Flight] Launch complete - entering altitude hold");
+                }
+
+                return; // Skip motor mixing — kinematic launch handles everything
             }
         }
 
