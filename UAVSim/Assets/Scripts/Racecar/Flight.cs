@@ -562,7 +562,7 @@ public class Flight : RacecarModule
             else
             {
                 float altError = TargetAltitude - this.transform.position.y;
-                float vertVel = this.rBody.linearVelocity.y;
+                float vertVel = this.rBody.velocity.y;
 
                 // Kinematic ascent: move drone directly upward, no physics forces
                 float launchSpeed = Mathf.Clamp(altError * Kp_alt - vertVel * Kd_alt, -maxVerticalThrustFraction * 5f, maxVerticalThrustFraction * 5f);
@@ -573,7 +573,7 @@ public class Flight : RacecarModule
                 this.rBody.Move(newPos, Quaternion.Euler(0f, currentYaw, 0f));
 
                 // Zero all physics velocities so no residual momentum fights us
-                this.rBody.linearVelocity = new Vector3(0f, launchSpeed, 0f);
+                this.rBody.velocity = new Vector3(0f, launchSpeed, 0f);
                 this.rBody.angularVelocity = Vector3.zero;
 
                 // Display symmetric motor speeds for telemetry only
