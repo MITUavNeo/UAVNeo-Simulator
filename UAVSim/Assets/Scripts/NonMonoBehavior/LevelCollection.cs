@@ -91,6 +91,51 @@ public class LevelCollection
 
         new LevelCollection()
         {
+            DisplayName = "UAV Neo Labs",
+            ShortName = "UAV",
+            Levels = new LevelInfo[]
+            {
+                new LevelInfo()
+                {
+                    DisplayName = "Module 1 - Hello Drone",
+                    BuildIndex = 142,
+                    HelpMessage = "Take off, hover, and explore! Use the colored cones to orient yourself - Red=North, Blue=East, Green=South, Yellow=West."
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Module 2 - Drone Control",
+                    BuildIndex = 143,
+                    HelpMessage = "Fly through all 4 gates in order! Gates are color-coded: Blue (1), Green (2), Yellow (3), Red (4). Each gate is at a different altitude."
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Module 3 Pt1 - Object Detection",
+                    BuildIndex = 144,
+                    HelpMessage = "Use your downward camera to detect objects by name (Pineapple, Vase, Hourglass, Cactus, Book). Fly within 6m of your detected target to win!"
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Module 3 Pt2 - ArUco Maze",
+                    BuildIndex = 145,
+                    HelpMessage = "Navigate the false-wall maze using ArUco marker IDs. ID 0 = FAKE (can fly through), ID 1 = REAL (solid wall). Reach the blue room to win!"
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Module 4 - Search and Rescue",
+                    BuildIndex = 146,
+                    HelpMessage = "Search the 60x60m area using spiral or lawnmower patterns to locate the orange SAR target. Fly within 3m of the red landing pad to win!"
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Module 5 - Maze Navigation",
+                    BuildIndex = 147,
+                    HelpMessage = "Navigate the 3-corridor brick maze using distance sensors. Spawn at (-68, 0, 0), use the right-hand rule to reach the green exit marker."
+                },
+            }
+        },
+
+        new LevelCollection()
+        {
             DisplayName = "Final Challenge",
             ShortName = "Final",
             Levels = new LevelInfo[]
