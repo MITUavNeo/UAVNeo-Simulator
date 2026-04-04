@@ -91,8 +91,8 @@ public class LevelCollection
 
         new LevelCollection()
         {
-            DisplayName = "UAV GRG Labs",
-            ShortName = "GRG",
+            DisplayName = "UAV Neo Labs",
+            ShortName = "UAV",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
