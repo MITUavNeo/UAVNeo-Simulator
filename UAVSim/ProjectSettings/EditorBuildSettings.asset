@@ -449,4 +449,32 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/UAV_Neo_Labs/Module5_MazeNavigation.unity
     guid: d1d5e96a92129f344abaa2e7eeb7dfc5
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module4_SAR/Mod4_1_SAR.unity
+    guid: 327390ee12fa6534faed58e6d33c8089
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module5_Maze/Mod5_1_Maze.unity
+    guid: ebf095b4aad11404c98b9bb45fb15159
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3b_ArUcoMaze/Mod3b_1_ArUcoMaze.unity
+    guid: ac8439396c293dd4bbf23c88383e2d3d
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Pineapple.unity
+    guid: aa1f7191e881df84f9b0b40373affba5
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Vase.unity
+    guid: af0024037d4fbae46a51ba850fbfe174
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Hourglass.unity
+    guid: acbc00371fa9e194dae24f69dc6094a9
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Cactus.unity
+    guid: 0f336dffcf2c6614a87a5ec6358a6bfe
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Book.unity
+    guid: 425114fe5927aaa479617f473afaae94
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module2_DroneControl/Mod2_1_GateRun.unity
+    guid: 78547a0c5b5128d448e62810301da453
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

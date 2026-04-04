@@ -105,31 +105,196 @@ public class LevelCollection
                 {
                     DisplayName = "Module 2 - Drone Control",
                     BuildIndex = 143,
-                    HelpMessage = "Fly through all 4 gates in order! Gates are color-coded: Blue (1), Green (2), Yellow (3), Red (4). Each gate is at a different altitude."
+                    HelpMessage = "Fly through all 4 gates in order! Gates are color-coded: Blue (1), Green (2), Yellow (3), Red (4). Each gate is at a different altitude.",
+                    AutograderBuildIndex = 156,
+                    AutograderLevelCode = "mod2gates",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 1",
+                            Description = "Fly through Gate 1 (Blue).",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 2",
+                            Description = "Fly through Gate 2 (Green).",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 3",
+                            Description = "Fly through Gate 3 (Yellow).",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 4",
+                            Description = "Fly through Gate 4 (Red).",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 5",
+                            Description = "Fly through Gate 5.",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 6",
+                            Description = "Fly through Gate 6.",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 7",
+                            Description = "Fly through Gate 7.",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 8",
+                            Description = "Fly through Gate 8.",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 9",
+                            Description = "Fly through Gate 9.",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 10",
+                            Description = "Fly through Gate 10.",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 11",
+                            Description = "Fly through Gate 11.",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 2 - Gate 12",
+                            Description = "Fly through Gate 12.",
+                            MaxPoints = 1,
+                            TimeLimit = 120
+                        },
+                    }
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Module 3 Pt1 - Object Detection",
                     BuildIndex = 144,
-                    HelpMessage = "Use your downward camera to detect objects by name (Pineapple, Vase, Hourglass, Cactus, Book). Fly within 6m of your detected target to win!"
+                    HelpMessage = "Use your downward camera to detect objects by name (Pineapple, Vase, Hourglass, Cactus, Book). Fly within 6m of your detected target to win!",
+                    AutograderBuildIndex = 151,
+                    AutograderLevelCode = "mod3aobj",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 3 Pt1 - Pineapple",
+                            Description = "Locate the Pineapple (BP_PineappleSculpture02_2) and fly within 6m of it.",
+                            MaxPoints = 2,
+                            TimeLimit = 90
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 3 Pt1 - Vase",
+                            Description = "Locate the Vase (BP_Vase09_2) and fly within 6m of it.",
+                            MaxPoints = 2,
+                            TimeLimit = 90
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 3 Pt1 - Hourglass",
+                            Description = "Locate the Hourglass (BP_Hourglass01_2) and fly within 6m of it.",
+                            MaxPoints = 2,
+                            TimeLimit = 90
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 3 Pt1 - Cactus",
+                            Description = "Locate the Cactus (BP_CactusSculpture03_2) and fly within 6m of it.",
+                            MaxPoints = 2,
+                            TimeLimit = 90
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 3 Pt1 - Book",
+                            Description = "Locate the Book (BP_BookGroup08_2) and fly within 6m of it.",
+                            MaxPoints = 2,
+                            TimeLimit = 90
+                        },
+                    }
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Module 3 Pt2 - ArUco Maze",
                     BuildIndex = 145,
-                    HelpMessage = "Navigate the false-wall maze using ArUco marker IDs. ID 0 = FAKE (can fly through), ID 1 = REAL (solid wall). Reach the blue room to win!"
+                    HelpMessage = "Navigate the false-wall maze using ArUco marker IDs. ID 0 = FAKE (can fly through), ID 1 = REAL (solid wall). Reach the blue room to win!",
+                    AutograderBuildIndex = 150,
+                    AutograderLevelCode = "mod3baruco",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 3 Pt2 - ArUco Maze",
+                            Description = "Read ArUco marker IDs to navigate through the false-wall maze. Reach the red room (z > 38) to win.",
+                            MaxPoints = 10,
+                            TimeLimit = 120
+                        }
+                    }
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Module 4 - Search and Rescue",
                     BuildIndex = 146,
-                    HelpMessage = "Search the 60x60m area using spiral or lawnmower patterns to locate the orange SAR target. Fly within 3m of the red landing pad to win!"
+                    HelpMessage = "Search the 60x60m area using spiral or lawnmower patterns to locate the orange SAR target. Fly within 3m of the red landing pad to win!",
+                    AutograderBuildIndex = 148,
+                    AutograderLevelCode = "mod4sar",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 4 - Search and Rescue",
+                            Description = "Locate the orange SAR target and fly within 3m of the red landing pad.",
+                            MaxPoints = 10,
+                            TimeLimit = 120
+                        }
+                    }
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Module 5 - Maze Navigation",
                     BuildIndex = 147,
-                    HelpMessage = "Navigate the 3-corridor brick maze using distance sensors. Spawn at (-68, 0, 0), use the right-hand rule to reach the green exit marker."
+                    HelpMessage = "Navigate the 3-corridor brick maze using distance sensors. Spawn at (-68, 0, 0), use the right-hand rule to reach the green exit marker.",
+                    AutograderBuildIndex = 149,
+                    AutograderLevelCode = "mod5maze",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 5 - Maze Navigation",
+                            Description = "Navigate the brick maze from spawn (-68, 0, 0) using the right-hand rule and reach the exit at x >= 16.",
+                            MaxPoints = 10,
+                            TimeLimit = 180
+                        }
+                    }
                 },
             }
         },
