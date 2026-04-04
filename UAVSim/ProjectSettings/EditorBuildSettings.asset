@@ -476,5 +476,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module2_DroneControl/Mod2_1_GateRun.unity
     guid: 78547a0c5b5128d448e62810301da453
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Module6_LineFollowing.unity
+    guid: 28039f3f0529f834ea269a1dfbea1373
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

@@ -85,6 +85,12 @@ public class LevelCollection
                 {
                     DisplayName = "Long Hallway Sandbox",
                     BuildIndex = 132,
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Line Following",
+                    BuildIndex = 157,
+                    HelpMessage = "Use your downward camera to detect the blue line and keep it centered. Follow the S-curve from the blue start disc to the green finish disc!"
                 }
             }
         },
