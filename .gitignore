@@ -3,6 +3,9 @@ UAVSim/Library
 UAVSim/Logs
 UAVSim/Temp
 UAVSim/UserSettings
+UAVSim/DroneDebugLogs
+UAVSim/context_files
+UAVSim/.vscode
 
 # This .gitignore file should be placed at the root of your Unity project directory
 #
