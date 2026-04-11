@@ -86,12 +86,6 @@ public class LevelCollection
                     DisplayName = "Long Hallway Sandbox",
                     BuildIndex = 132,
                 },
-                new LevelInfo()
-                {
-                    DisplayName = "Line Following",
-                    BuildIndex = 157,
-                    HelpMessage = "Use your downward camera to detect the blue line and keep it centered. Follow the S-curve from the blue start disc to the green finish disc!"
-                }
             }
         },
 
@@ -301,6 +295,12 @@ public class LevelCollection
                             TimeLimit = 180
                         }
                     }
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Module 6 - Line Following",
+                    BuildIndex = 157,
+                    HelpMessage = "Fly at 1.2 m and use the downward camera to follow the red line. Implement proportional control to stay centred on the F1 circuit!"
                 },
             }
         },
