@@ -105,6 +105,7 @@ public static class BuildF1Track
 
             child.AddComponent<MeshFilter>().sharedMesh = wallMesh;
             child.AddComponent<MeshRenderer>().sharedMaterial = redMat;
+            parent.AddComponent<LineTrackPiece>();   // marker for LineColorRandomizer
 
             corners++;
         }
@@ -173,6 +174,7 @@ public static class BuildF1Track
             go.name = $"RedLine_S{straights++}";
             go.transform.position    = new Vector3(s.x, Y, s.z);
             go.transform.eulerAngles = new Vector3(0f, s.rotY, 0f);
+            go.AddComponent<LineTrackPiece>();        // marker for LineColorRandomizer
         }
 
         // ── LineColorRandomizer manager ───────────────────────────────────────

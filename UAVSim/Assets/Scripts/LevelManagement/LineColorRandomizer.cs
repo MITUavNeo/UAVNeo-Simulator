@@ -1,31 +1,30 @@
 using UnityEngine;
 
 /// <summary>
-/// Recolors all F1 track pieces to a randomly chosen color every time
-/// the scene enters Play Mode.
+/// Recolors all Module 6 track pieces to a random colour every Play Mode entry.
 ///
-/// Attach this script to any GameObject in Module6_LineFollowing
-/// (and the Module 6 autograder scene).  BuildF1Track.cs creates a
-/// "LineManager" object automatically — this script lives on that object.
+/// HOW IT WORKS
+/// ────────────
+/// BuildF1Track.cs adds a LineTrackPiece marker component to every corner
+/// and straight piece.  On Start() this script finds all LineTrackPiece
+/// objects and sets their material colour using MaterialPropertyBlock —
+/// the approach that works in both Built-in and URP pipelines.
 ///
-/// The chosen color is logged so students can verify visually:
+/// The colour is chosen freshly each time Play is pressed, so students
+/// cannot hardcode an HSV range — they must detect it from the camera.
+///
+/// Console output (once per run):
 ///   [LineColorRandomizer] This run: Blue (35 pieces recolored)
-///
-/// Students must detect the color dynamically from the downward camera
-/// — they cannot hardcode red anymore!
 /// </summary>
 public class LineColorRandomizer : MonoBehaviour
 {
     // ── Palette ───────────────────────────────────────────────────────────────
-    // 7 visually distinct colors with good HSV separation so the drone camera
-    // can reliably distinguish them.
-    public static readonly string[] ColorNames = new string[]
+    public static readonly string[] ColorNames =
     {
         "Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Cyan"
     };
 
-    // Unity Color (linear sRGB) for each palette entry
-    private static readonly Color[] PaletteColors = new Color[]
+    private static readonly Color[] PaletteColors =
     {
         new Color(0.90f, 0.08f, 0.08f),   // Red
         new Color(0.08f, 0.32f, 0.90f),   // Blue
@@ -36,12 +35,9 @@ public class LineColorRandomizer : MonoBehaviour
         new Color(0.00f, 0.82f, 0.88f),   // Cyan
     };
 
-    // ── Public state (readable by other scripts if needed) ────────────────────
-    /// <summary>The name of the color chosen for this run, e.g. "Blue".</summary>
-    public static string CurrentColorName  { get; private set; } = "Unknown";
-
-    /// <summary>The Unity Color chosen for this run.</summary>
-    public static Color CurrentColor { get; private set; } = Color.red;
+    // ── Public state ──────────────────────────────────────────────────────────
+    public static string CurrentColorName { get; private set; } = "Unknown";
+    public static Color  CurrentColor     { get; private set; } = Color.red;
 
     // ── Runtime ───────────────────────────────────────────────────────────────
     private void Start()
@@ -54,32 +50,39 @@ public class LineColorRandomizer : MonoBehaviour
 
         Debug.Log($"[LineColorRandomizer] This run: {CurrentColorName} " +
                   $"({count} pieces recolored). " +
-                  $"Students: detect the colour from your downward camera!");
+                  $"Detect the colour from your downward camera!");
     }
 
-    /// <summary>
-    /// Sets the material colour on every track piece in the scene.
-    /// Pieces are identified by the naming convention used in BuildF1Track.cs:
-    ///   "Corner_*"  — smooth arc corners (child mesh named "Mesh")
-    ///   "RedLine_*" — flat straight pieces
-    /// Using renderer.material (not sharedMaterial) creates per-instance
-    /// materials so the shared RedFlat asset is never modified.
-    /// </summary>
     private static int RecolorTrack(Color color)
     {
-        int count = 0;
-        foreach (GameObject go in FindObjectsOfType<GameObject>())
-        {
-            if (!go.name.StartsWith("Corner_") && !go.name.StartsWith("RedLine_"))
-                continue;
+        // MaterialPropertyBlock works in both Built-in and URP/HDRP
+        var block = new MaterialPropertyBlock();
+        block.SetColor("_BaseColor", color);   // URP / HDRP
+        block.SetColor("_Color",     color);   // Built-in fallback
 
-            foreach (MeshRenderer r in go.GetComponentsInChildren<MeshRenderer>(true))
+        int count = 0;
+
+        // Find every piece tagged by BuildF1Track with the LineTrackPiece marker
+#if UNITY_2022_2_OR_NEWER
+        var pieces = FindObjectsByType<LineTrackPiece>(FindObjectsSortMode.None);
+#else
+        var pieces = FindObjectsOfType<LineTrackPiece>();
+#endif
+        foreach (var piece in pieces)
+        {
+            foreach (var r in piece.GetComponentsInChildren<MeshRenderer>(true))
             {
-                // renderer.material auto-creates an instance if needed
-                r.material.color = color;
+                r.SetPropertyBlock(block);
                 count++;
             }
         }
+
+        if (count == 0)
+        {
+            Debug.LogWarning("[LineColorRandomizer] No LineTrackPiece objects found! " +
+                             "Run BWSI → Build F1 Track (Module 6) once to rebuild the scene.");
+        }
+
         return count;
     }
 }
