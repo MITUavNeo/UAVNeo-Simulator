@@ -300,7 +300,20 @@ public class LevelCollection
                 {
                     DisplayName = "Module 6 - Line Following",
                     BuildIndex = 157,
-                    HelpMessage = "Fly at 1.2 m and use the downward camera to follow the red line. Implement proportional control to stay centred on the F1 circuit!"
+                    HelpMessage = "Fly at 1.2 m and use the downward camera to follow the red line. Implement proportional control to stay centred on the F1 circuit!",
+                    AutograderBuildIndex = 158,
+                    AutograderLevelCode = "mod6line",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 6 - Line Following",
+                            Description = "Follow the red line around the F1 circuit. " +
+                                          "Pass T1 (z≥45) → reach east side (x≥55) → reach back straight (z≤-25).",
+                            MaxPoints = 10,
+                            TimeLimit = 120
+                        }
+                    }
                 },
             }
         },
