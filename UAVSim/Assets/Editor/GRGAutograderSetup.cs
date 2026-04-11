@@ -203,6 +203,13 @@ public static class GRGAutograderSetup
         }
         else
         {
+            // Ensure LineColorRandomizer manager exists (duplicated from source scene)
+            if (GameObject.Find("LineManager") == null)
+            {
+                var lm = new GameObject("LineManager");
+                lm.AddComponent<LineColorRandomizer>();
+            }
+
             // Parent GameObject — AutograderManager component finds child tasks via GetComponentsInChildrenOrdered
             var manager = new GameObject(managerName);
             manager.AddComponent<AutograderManager>();
@@ -224,7 +231,7 @@ public static class GRGAutograderSetup
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log($"[GRGAutograderSetup] {Mod6AgScene}: AutograderManager + 3 tasks added.");
+            Debug.Log($"[GRGAutograderSetup] {Mod6AgScene}: AutograderManager + 3 tasks + LineColorRandomizer added.");
         }
 
         // ── 3. Register scene in EditorBuildSettings ───────────────────────────

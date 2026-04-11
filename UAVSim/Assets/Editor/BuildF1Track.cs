@@ -175,6 +175,14 @@ public static class BuildF1Track
             go.transform.eulerAngles = new Vector3(0f, s.rotY, 0f);
         }
 
+        // ── LineColorRandomizer manager ───────────────────────────────────────
+        // Destroy any existing manager so we don't duplicate it on rebuild
+        var existing = GameObject.Find("LineManager");
+        if (existing != null) Object.DestroyImmediate(existing);
+
+        var lineManager = new GameObject("LineManager");
+        lineManager.AddComponent<LineColorRandomizer>();
+
         // ── Save ─────────────────────────────────────────────────────────────
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
