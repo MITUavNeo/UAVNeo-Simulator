@@ -41,7 +41,7 @@ public static class Settings
 
     #region Public Interface
     /// <summary>
-    /// Quality levels supported by the RacecarSim (higher quality is more computationally intensive).
+    /// Quality levels supported by the DroneSim (higher quality is more computationally intensive).
     /// </summary>
     public enum DepthResolution
     {

@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// An object which resets a racecar back to the previous checkpoint on collision.
+/// An object which resets a drone back to the previous checkpoint on collision.
 /// </summary>
 public class ResetOnCollide : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        Racecar racecar = other.GetComponentInParent<Racecar>();
-        if (racecar != null)
+        Drone drone = other.GetComponentInParent<Drone>();
+        if (drone != null)
         {
-            LevelManager.ResetCar(racecar.Index);
+            LevelManager.ResetDrone(drone.Index);
         }
     }
 }

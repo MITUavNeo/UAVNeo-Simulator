@@ -194,7 +194,7 @@ public class AutograderManager : MonoBehaviour
             }
 
             if (elapsedTime > AutograderManager.LevelInfo.TimeLimit ||
-                (AutograderManager.LevelInfo.DoNotProceedUntilStopped && this.taskIndex >= this.tasks.Length && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed) ||
+                (AutograderManager.LevelInfo.DoNotProceedUntilStopped && this.taskIndex >= this.tasks.Length && LevelManager.GetDrone().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed) ||
                 Input.GetKeyDown(KeyCode.Tab))
             {
                 this.FinishLevel();

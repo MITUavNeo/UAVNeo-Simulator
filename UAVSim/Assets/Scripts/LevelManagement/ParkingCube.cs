@@ -21,7 +21,7 @@ public class ParkingCube : MonoBehaviour
 
     #region Constants
     /// <summary>
-    /// The angle that the car should attempt to reach with the wall in degrees.
+    /// The angle that the drone should attempt to reach with the wall in degrees.
     /// </summary>
     private const float goalAngle = 0;
 
@@ -31,7 +31,7 @@ public class ParkingCube : MonoBehaviour
     private const float angleThreshold = 5;
 
     /// <summary>
-    /// The distance that the car should attempt to reach from the wall in cm.
+    /// The distance that the drone should attempt to reach from the wall in cm.
     /// </summary>
     private const float goalDistance = 20;
 
@@ -47,17 +47,17 @@ public class ParkingCube : MonoBehaviour
     private AutograderTask autograderTask;
 
     /// <summary>
-    /// The shortest distance between the car and the wall in cm calculated this frame.
+    /// The shortest distance between the drone and the wall in cm calculated this frame.
     /// </summary>
     private float? distance;
 
     /// <summary>
-    /// The angle between the wall and the car in degrees calculated this frame.
+    /// The angle between the wall and the drone in degrees calculated this frame.
     /// </summary>
     private float? angle;
 
     /// <summary>
-    /// The shortest distance between the car and the wall in cm.
+    /// The shortest distance between the drone and the wall in cm.
     /// </summary>
     private float Distance
     {
@@ -73,16 +73,16 @@ public class ParkingCube : MonoBehaviour
 
                 for (int i = 0; i < 3; i++)
                 {
-                    // Perform a raycast from the cube to the car to find the closest point on the car
-                    if (Physics.Raycast(raycastHit.point, LevelManager.GetCar().Center - raycastHit.point, out RaycastHit carPoint, Constants.RaycastMaxDistance, Constants.IgnoreUIMask))
+                    // Perform a raycast from the cube to the drone to find the closest point on the drone
+                    if (Physics.Raycast(raycastHit.point, LevelManager.GetDrone().Center - raycastHit.point, out RaycastHit dronePoint, Constants.RaycastMaxDistance, Constants.IgnoreUIMask))
                     {
-                        if (carPoint.collider.GetComponentInParent<Racecar>() == null)
+                        if (dronePoint.collider.GetComponentInParent<Drone>() == null)
                         {
                             break;
                         }
 
-                        // Perform a second raycast directly back from the car to the wall to find the closest point on the wall
-                        if (Physics.Raycast(carPoint.point, this.transform.forward, out raycastHit, Constants.RaycastMaxDistance, Constants.IgnoreUIAndPlayerMask))
+                        // Perform a second raycast directly back from the drone to the wall to find the closest point on the wall
+                        if (Physics.Raycast(dronePoint.point, this.transform.forward, out raycastHit, Constants.RaycastMaxDistance, Constants.IgnoreUIAndPlayerMask))
                         {
                             if (raycastHit.collider.gameObject != this.gameObject)
                             {
@@ -101,7 +101,7 @@ public class ParkingCube : MonoBehaviour
     }
 
     /// <summary>
-    /// The angle between the wall and the car in degrees.
+    /// The angle between the wall and the drone in degrees.
     /// </summary>
     private float Angle
     {
@@ -109,7 +109,7 @@ public class ParkingCube : MonoBehaviour
         {
             if (!this.angle.HasValue)
             {
-                this.angle = Mathf.Abs(this.transform.rotation.eulerAngles.y - LevelManager.GetCar().transform.rotation.eulerAngles.y);
+                this.angle = Mathf.Abs(this.transform.rotation.eulerAngles.y - LevelManager.GetDrone().transform.rotation.eulerAngles.y);
                 if (this.angle > 180)
                 {
                     this.angle = 360 - this.angle;
@@ -121,7 +121,7 @@ public class ParkingCube : MonoBehaviour
     }
 
     /// <summary>
-    /// True if the car is within the desired distance and angle threshold.
+    /// True if the drone is within the desired distance and angle threshold.
     /// </summary>
     private bool IsSuccess
     {
@@ -164,7 +164,7 @@ public class ParkingCube : MonoBehaviour
         {
             LevelManager.ShowMessage($"Angle: {this.Angle:F1} degrees\nDistance: {this.Distance:F1} cm", this.IsSuccess ? Color.green : Color.white, -1);
         }
-        else if (this.IsSuccess && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
+        else if (this.IsSuccess && LevelManager.GetDrone().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
         {
             // TODO: Find a way to display Angle and Distance
             AutograderManager.CompleteTask(this.autograderTask);

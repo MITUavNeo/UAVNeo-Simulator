@@ -2,20 +2,20 @@
 using UnityEngine;
 
 /// <summary>
-/// Manages a zone in which cars are not allowed to surpass a certain maximum speed.
+/// Manages a zone in which drones are not allowed to surpass a certain maximum speed.
 /// </summary>
 public class SpeedLimit : MonoBehaviour
 {
     #region Set in Unity Editor
     /// <summary>
-    /// The maximum speed (in meters/second) which cars are allowed to travel within this speed limit zone.
+    /// The maximum speed (in meters/second) which drones are allowed to travel within this speed limit zone.
     /// </summary>
     [SerializeField]
     private float maxSpeed = 0.5f;
     #endregion
 
     /// <summary>
-    /// The message shown when a car breaks the speed limit.
+    /// The message shown when a drone breaks the speed limit.
     /// </summary>
     private string FailureMessage
     {
@@ -26,36 +26,36 @@ public class SpeedLimit : MonoBehaviour
     }            
 
     /// <summary>
-    /// The cars currently within the speed limit zone.
+    /// The drones currently within the speed limit zone.
     /// </summary>
-    private readonly HashSet<Racecar> cars = new HashSet<Racecar>();
+    private readonly HashSet<Drone> drones = new HashSet<Drone>();
 
     private void Update()
     {
-        foreach (Racecar car in this.cars)
+        foreach (Drone drone in this.drones)
         {
-            if (car.Physics.LinearVelocity.magnitude > this.maxSpeed)
+            if (drone.Physics.LinearVelocity.magnitude > this.maxSpeed)
             {
-                LevelManager.HandleFailure(car.Index, this.FailureMessage);
+                LevelManager.HandleFailure(drone.Index, this.FailureMessage);
             }
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Racecar car = other.GetComponentInParent<Racecar>();
-        if (car != null)
+        Drone drone = other.GetComponentInParent<Drone>();
+        if (drone != null)
         {
-            cars.Add(car);
+            drones.Add(drone);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Racecar car = other.GetComponentInParent<Racecar>();
-        if (car != null)
+        Drone drone = other.GetComponentInParent<Drone>();
+        if (drone != null)
         {
-            cars.Remove(car);
+            drones.Remove(drone);
         }
     }
 }

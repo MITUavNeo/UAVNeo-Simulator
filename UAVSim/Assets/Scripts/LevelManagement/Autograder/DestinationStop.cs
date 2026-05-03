@@ -7,7 +7,7 @@ public class DestinationStop : AutograderTask
 {
     #region Set in Unity Editor
     /// <summary>
-    /// The maximum speed which the car can travel in m/s and still be considered "stopped".
+    /// The maximum speed which the drone can travel in m/s and still be considered "stopped".
     /// </summary>
     [SerializeField]
     private float maxStopSpeed = Constants.MaxStopSeed;
@@ -15,7 +15,7 @@ public class DestinationStop : AutograderTask
 
     #region Constants
     /// <summary>
-    /// The time in seconds which the car must stop at the point to complete the task.
+    /// The time in seconds which the drone must stop at the point to complete the task.
     /// </summary>
     private const float stopDuration = 1.0f;
 
@@ -60,10 +60,10 @@ public class DestinationStop : AutograderTask
 
     private void OnTriggerStay(Collider other)
     {
-        Racecar racecar = other.GetComponentInParent<Racecar>();
-        if (racecar != null)
+        Drone drone = other.GetComponentInParent<Drone>();
+        if (drone != null)
         {
-            if (racecar.Physics.LinearVelocity.magnitude < this.maxStopSpeed)
+            if (drone.Physics.LinearVelocity.magnitude < this.maxStopSpeed)
             {
                 this.startTime = Mathf.Min(this.startTime, Time.time);
                 if (Time.time - this.startTime >= DestinationStop.stopDuration)

@@ -131,7 +131,7 @@ public static class PerformanceOptimizer
     private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // Optimize ALL cameras in the scene
-        foreach (Camera cam in Object.FindObjectsOfType<Camera>())
+        foreach (Camera cam in Object.FindObjectsByType<Camera>())
         {
             // ── Sensor cameras (small render textures shown as thumbnails) ──
             if (cam.targetTexture != null)

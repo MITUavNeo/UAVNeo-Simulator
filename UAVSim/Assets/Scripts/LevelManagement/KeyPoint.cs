@@ -49,17 +49,17 @@ public class KeyPoint : MonoBehaviour, IComparable<KeyPoint>
 
     private void OnTriggerEnter(Collider other)
     {
-        Racecar car = other.attachedRigidbody.GetComponent<Racecar>();
-        if (car != null)
+        Drone drone = other.attachedRigidbody.GetComponent<Drone>();
+        if (drone != null)
         {
             switch (this.Type)
             {
                 case KeyPointType.Finish:
-                    LevelManager.HandleFinish(car.Index);
+                    LevelManager.HandleFinish(drone.Index);
                     break;
 
                 case KeyPointType.Checkpoint:
-                    LevelManager.HandleCheckpoint(car.Index, this.checkpointIndex);
+                    LevelManager.HandleCheckpoint(drone.Index, this.checkpointIndex);
                     break;
             }
         }

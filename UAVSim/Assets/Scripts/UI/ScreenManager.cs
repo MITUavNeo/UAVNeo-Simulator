@@ -41,7 +41,7 @@ public abstract class ScreenManager : MonoBehaviour
     /// <param name="color">The color of the text.</param>
     /// <param name="persistTime">The time in seconds the text is shown.</param>
     /// <param name="fadeTime">In the time in seconds it takes for the text to fade out after persistTime has passed.</param>
-    public void ShowMessage(string message, Color color, float persistTime = -1, float fadeTime = 1.0f)
+    public virtual void ShowMessage(string message, Color color, float persistTime = -1, float fadeTime = 1.0f)
     {
         this.texts[this.messageTextIndex].text = message;
         this.texts[this.messageTextIndex].color = color;
@@ -68,7 +68,7 @@ public abstract class ScreenManager : MonoBehaviour
     /// Updates the element showing the current time elapsed in the race.
     /// </summary>
     /// <param name="mainTime">The total time in seconds that the current level has been running.</param>
-    /// <param name="keyPointDurations">The time which the 0th car spent on each key point, indexed by key point.</param>
+    /// <param name="keyPointDurations">The time which the 0th drone spent on each key point, indexed by key point.</param>
     public virtual void UpdateTime(float mainTime, float[] keyPointDurations)
     {
         this.texts[this.mainTimeTextIndex].text = mainTime.ToString("F3");
@@ -80,7 +80,7 @@ public abstract class ScreenManager : MonoBehaviour
     /// Updates the elements showing when the simulation is paused.
     /// </summary>
     /// <param name="isPaused">True if the simulation is currently paused.</param>
-    public void SetPause(bool isPaused)
+    public virtual void SetPause(bool isPaused)
     {
         this.images[this.pauseScreenIndex].gameObject.SetActive(isPaused);
     }
@@ -94,16 +94,16 @@ public abstract class ScreenManager : MonoBehaviour
     public abstract void HandleWin(float time, bool isNewBestTime);
 
     /// <summary>
-    /// Update the element(s) indicating that a car failed a critical objective.
+    /// Update the element(s) indicating that a drone failed a critical objective.
     /// </summary>
-    /// <param name="carIndex">The index of the car which failed the objective.</param>
+    /// <param name="droneIndex">The index of the drone which failed the objective.</param>
     /// <param name="reason">A description of the failure.</param>
-    public abstract void HandleFailure(int carIndex, string reason);
+    public abstract void HandleFailure(int droneIndex, string reason);
 
     /// <summary>
-    /// Update the element(s) indicating the Python script(s) connected to RacecarSim.
+    /// Update the element(s) indicating the Python script(s) connected to DroneSim.
     /// </summary>
-    /// <param name="connectedPrograms">An array in which each element indicates whether the racecar of the same index is connected to a Python script.</param>
+    /// <param name="connectedPrograms">An array in which each element indicates whether the drone of the same index is connected to a Python script.</param>
     public abstract void UpdateConnectedPrograms(bool[] connectedPrograms);
 
     /// <summary>
@@ -181,20 +181,20 @@ public abstract class ScreenManager : MonoBehaviour
     /// <summary>
     /// A counter used to track message persistence and fade out.
     /// </summary>
-    private float messageCounter;
+    protected float messageCounter;
 
     /// <summary>
     /// The time is seconds that the current message will persist.  If -1, the current message will persist indefinitely.
     /// </summary>
-    private float messagePersistTime;
+    protected float messagePersistTime;
 
     /// <summary>
     /// The time in seconds that the current message will take to fade out.
     /// </summary>
-    private float messageFadeTime;
+    protected float messageFadeTime;
 
     /// <summary>
     /// The color of the current message.
     /// </summary>
-    private Color messageColor;
+    protected Color messageColor;
 }

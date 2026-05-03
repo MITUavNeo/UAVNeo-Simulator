@@ -60,9 +60,9 @@ public class LevelInfo
     public int WinableIndex = -1;
 
     /// <summary>
-    /// The maximum number of cars the level supports.
+    /// The maximum number of drones the level supports.
     /// </summary>
-    public int MaxCars = 1;
+    public int MaxDrones = 1;
 
     /// <summary>
     /// The number of checkpoints in the level.

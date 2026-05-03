@@ -4,7 +4,7 @@ public class Bill : MonoBehaviour
 {
     #region Set in Unity Editor
     /// <summary>
-    /// The maximum speed allowed by Bill. Any car exceeding this speed will be hit.
+    /// The maximum speed allowed by Bill. Any drone exceeding this speed will be hit.
     /// </summary>
     [SerializeField]
     private float MaxSpeed = 0.5f;
@@ -14,7 +14,7 @@ public class Bill : MonoBehaviour
     private const float thrust = 100000000;
     #endregion
 
-    private Racecar[] cars;
+    private Drone[] drones;
 
     private GameObject target = null;
 
@@ -25,11 +25,11 @@ public class Bill : MonoBehaviour
         this.rBody = this.GetComponent<Rigidbody>();
 
         // Find all players in the level
-        GameObject[] carObjects = GameObject.FindGameObjectsWithTag("Player");
-        this.cars = new Racecar[carObjects.Length];
-        for (int i = 0; i < carObjects.Length; i++)
+        GameObject[] droneObjects = GameObject.FindGameObjectsWithTag("Player");
+        this.drones = new Drone[droneObjects.Length];
+        for (int i = 0; i < droneObjects.Length; i++)
         {
-            this.cars[i] = carObjects[i].GetComponent<Racecar>();
+            this.drones[i] = droneObjects[i].GetComponent<Drone>();
         }
     }
 
@@ -37,11 +37,11 @@ public class Bill : MonoBehaviour
     {
         if (this.target == null)
         {
-            foreach (Racecar car in this.cars)
+            foreach (Drone drone in this.drones)
             {
-                if (car.Physics.LinearVelocity.magnitude > this.MaxSpeed)
+                if (drone.Physics.LinearVelocity.magnitude > this.MaxSpeed)
                 {
-                    this.target = car.gameObject;
+                    this.target = drone.gameObject;
                     break;
                 }
             }

@@ -15,7 +15,7 @@ public class SpeedRequirement : AutograderTask
 
     private void Update()
     {
-        if (LevelManager.GetCar().Physics.LinearVelocity.magnitude > this.speed)
+        if (LevelManager.GetDrone().Physics.LinearVelocity.magnitude > this.speed)
         {
             AutograderManager.CompleteTask(this);
         }

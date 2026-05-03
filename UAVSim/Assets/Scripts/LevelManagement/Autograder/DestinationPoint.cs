@@ -7,8 +7,8 @@ public class DestinationPoint : AutograderTask
 {
     private void OnTriggerEnter(Collider other)
     {
-        Racecar racecar = other.GetComponentInParent<Racecar>();
-        if (racecar != null)
+        Drone drone = other.GetComponentInParent<Drone>();
+        if (drone != null)
         {
             AutograderManager.CompleteTask(this);
         }

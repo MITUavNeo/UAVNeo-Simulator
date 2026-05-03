@@ -13,7 +13,7 @@ public class FailOnCollide : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         // If the collider is a player, cause the player to fail
-        Racecar player = collision.collider.GetComponentInParent<Racecar>();
+        Drone player = collision.collider.GetComponentInParent<Drone>();
         if (player != null)
         {
             LevelManager.HandleFailure(player.Index, FailOnCollide.failureMessage);

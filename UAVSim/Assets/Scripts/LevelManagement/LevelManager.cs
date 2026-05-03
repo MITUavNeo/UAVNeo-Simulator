@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public enum SimulationMode
 {
-    DefaultDrive,
+    DefaultFlight,
     UserProgram,
     Wait,
     Finished
@@ -43,7 +43,7 @@ public class LevelManager : MonoBehaviour
     private GameObject hudPrefab;
 
     /// <summary>
-    /// The prefab which is copied to create the screen manager for a race with multiple cars.
+    /// The prefab which is copied to create the screen manager for a race with multiple drones.
     /// </summary>
     [SerializeField]
     private GameObject raceScreenPrefab;
@@ -55,25 +55,25 @@ public class LevelManager : MonoBehaviour
     private GameObject defaultStart;
 
     // The Unity Editor does not support jagged arrays,
-    // so we resort to hard coding settable positions for up to four cars.
+    // so we resort to hard coding settable positions for up to four drones.
 
     /// <summary>
-    /// The offsets from which two cars will be spawned from the start point.
+    /// The offsets from which two drones will be spawned from the start point.
     /// </summary>
     [SerializeField]
-    private Vector3[] twoCarSpawnOffsets = { new Vector3(-4, 0, 0), new Vector3(4, 0, 0) };
+    private Vector3[] twoDroneSpawnOffsets = { new Vector3(-4, 0, 0), new Vector3(4, 0, 0) };
 
     /// <summary>
-    /// The offsets from which three cars will be spawned from the start point.
+    /// The offsets from which three drones will be spawned from the start point.
     /// </summary>
     [SerializeField]
-    private Vector3[] threeCarSpawnOffsets = { new Vector3(-5, 0, 0), new Vector3(0, 0, 0), new Vector3(5, 0, 0) };
+    private Vector3[] threeDroneSpawnOffsets = { new Vector3(-5, 0, 0), new Vector3(0, 0, 0), new Vector3(5, 0, 0) };
 
     /// <summary>
-    /// The offsets from which two cars will be spawned from the start point.
+    /// The offsets from which four drones will be spawned from the start point.
     /// </summary>
     [SerializeField]
-    private Vector3[] fourCarSpawnOffsets = { new Vector3(-4, 0, 0), new Vector3(4, 0, 0), new Vector3(-4, 0, -8), new Vector3(4, 0, -8) };
+    private Vector3[] fourDroneSpawnOffsets = { new Vector3(-4, 0, 0), new Vector3(4, 0, 0), new Vector3(-4, 0, -8), new Vector3(4, 0, -8) };
     #endregion
 
     #region Constants
@@ -90,7 +90,7 @@ public class LevelManager : MonoBehaviour
 
     #region Public Interface
     /// <summary>
-    /// The number of players (racecars) in the level.
+    /// The number of players (drones) in the level.
     /// </summary>
     public static int NumPlayers = 1;
 
@@ -122,7 +122,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            LevelManager.instance.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultDrive : SimulationMode.Wait;
+            LevelManager.instance.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultFlight : SimulationMode.Wait;
             LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.simulationMode);
 
             errorText = $">> Error: {errorText} Returning to {LevelManager.instance.simulationMode} mode.";
@@ -144,20 +144,20 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles when a car passes a checkpoint.
+    /// Handles when a drone passes a checkpoint.
     /// </summary>
-    /// <param name="carIndex">The index of the car which passed the checkpoint.</param>
+    /// <param name="droneIndex">The index of the drone which passed the checkpoint.</param>
     /// <param name="checkpointIndex">The index of the checkpoint which was passed.</param>
-    public static void HandleCheckpoint(int carIndex, int checkpointIndex)
+    public static void HandleCheckpoint(int droneIndex, int checkpointIndex)
     {
-        // Only count the checkpoint if the car has not passed this checkpoint (or a later one) yet
-        if (!LevelManager.instance.failed && LevelManager.instance.curKeyPoints[carIndex] <= checkpointIndex)
+        // Only count the checkpoint if the drone has not passed this checkpoint (or a later one) yet
+        if (!LevelManager.instance.failed && LevelManager.instance.curKeyPoints[droneIndex] <= checkpointIndex)
         {
             // Add 1 to account for the start, making this a key point index
             checkpointIndex++;
-            LevelManager.instance.curKeyPoints[carIndex] = checkpointIndex;
+            LevelManager.instance.curKeyPoints[droneIndex] = checkpointIndex;
 
-            if (LevelManager.LevelManagerMode == LevelManagerMode.Race && carIndex == 0)
+            if (LevelManager.LevelManagerMode == LevelManagerMode.Race && droneIndex == 0)
             {
                 LevelManager.instance.keyPointDurations[checkpointIndex] = LevelManager.instance.CurTime - LevelManager.instance.prevKeyPointTime;
                 LevelManager.instance.prevKeyPointTime = LevelManager.instance.CurTime;
@@ -166,27 +166,27 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles when a car passes the finish line.
+    /// Handles when a drone passes the finish line.
     /// </summary>
-    /// <param name="carIndex">The index of the car which passed the finish line.</param>
-    public static void HandleFinish(int carIndex)
+    /// <param name="droneIndex">The index of the drone which passed the finish line.</param>
+    public static void HandleFinish(int droneIndex)
     {
         int finishIndex = LevelManager.instance.keyPoints.Length - 1;
 
-        // Only count if the car has not passed the finish yet
-        if (!LevelManager.instance.failed && LevelManager.instance.curKeyPoints[carIndex] < finishIndex)
+        // Only count if the drone has not passed the finish yet
+        if (!LevelManager.instance.failed && LevelManager.instance.curKeyPoints[droneIndex] < finishIndex)
         {
-            LevelManager.instance.curKeyPoints[carIndex] = finishIndex;
+            LevelManager.instance.curKeyPoints[droneIndex] = finishIndex;
 
             if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
             {
-                if (carIndex == 0)
+                if (droneIndex == 0)
                 {
                     LevelManager.instance.keyPointDurations[finishIndex] = LevelManager.instance.CurTime - LevelManager.instance.prevKeyPointTime;
                     LevelManager.instance.totalDuration = LevelManager.instance.CurTime;
                 }
 
-                // Trigger a win when all cars have finished
+                // Trigger a win when all drones have finished
                 if (LevelManager.instance.curKeyPoints.All(x => x == finishIndex))
                 {
                     bool isNewBestTime =
@@ -203,25 +203,25 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles when a car fails the objective.
+    /// Handles when a drone fails the objective.
     /// </summary>
-    /// <param name="carIndex">The car which failed.</param>
+    /// <param name="droneIndex">The drone which failed.</param>
     /// <param name="failureMessage">The message to display describing the reason the objective was failed.</param>
-    public static void HandleFailure(int carIndex, string failureMessage)
+    public static void HandleFailure(int droneIndex, string failureMessage)
     {
         if (LevelManager.LevelManagerMode == LevelManagerMode.Autograder)
         {
             LevelManager.instance.autograderManager.HandleFailure();
         }
 
-        // Do not count the failure if the car has already finished
-        else if (!(LevelManager.LevelManagerMode == LevelManagerMode.Race && LevelManager.instance.curKeyPoints[carIndex] == LevelManager.instance.keyPoints.Length - 1))
+        // Do not count the failure if the drone has already finished
+        else if (!(LevelManager.LevelManagerMode == LevelManagerMode.Race && LevelManager.instance.curKeyPoints[droneIndex] == LevelManager.instance.keyPoints.Length - 1))
         {
-            LevelManager.instance.screenManager.HandleFailure(carIndex, failureMessage);
+            LevelManager.instance.screenManager.HandleFailure(droneIndex, failureMessage);
 
             if (LevelManager.NumPlayers > 1)
             {
-                LevelManager.ResetCar(carIndex);
+                LevelManager.ResetDrone(droneIndex);
             }
             else if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
             {
@@ -234,7 +234,7 @@ public class LevelManager : MonoBehaviour
     /// Adds a time penalty for the entire race.
     /// </summary>
     /// <param name="penalty">The time penalty in seconds.</param>
-    /// <remarks>If there are multiple cars in the race, this will penalize all cars.</remarks>
+    /// <remarks>If there are multiple drones in the race, this will penalize all drones.</remarks>
     public static void AddTimePenalty(float penalty)
     {
         if (LevelManager.LevelManagerMode != LevelManagerMode.Exploration)
@@ -248,28 +248,28 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Reset a car to its last checkpoint.
+    /// Reset a drone to its last checkpoint.
     /// </summary>
-    /// <param name="carIndex">The index of the car to reset.</param>
-    public static void ResetCar(int carIndex)
+    /// <param name="droneIndex">The index of the drone to reset.</param>
+    public static void ResetDrone(int droneIndex)
     {
-        Transform resetLocation = LevelManager.instance.GetResetLocation(carIndex);
+        Transform resetLocation = LevelManager.instance.GetResetLocation(droneIndex);
 
         // Stop physics first
-        Rigidbody carRigidBody = LevelManager.instance.players[carIndex].GetComponent<Rigidbody>();
-        carRigidBody.velocity = Vector3.zero;
-        carRigidBody.angularVelocity = Vector3.zero;
+        Rigidbody droneRigidBody = LevelManager.instance.players[droneIndex].GetComponent<Rigidbody>();
+        droneRigidBody.linearVelocity = Vector3.zero;
+        droneRigidBody.angularVelocity = Vector3.zero;
 
         // Use physics-aware movement methods
-        carRigidBody.MovePosition(resetLocation.position);
-        carRigidBody.MoveRotation(resetLocation.rotation);
+        droneRigidBody.MovePosition(resetLocation.position);
+        droneRigidBody.MoveRotation(resetLocation.rotation);
 
         // Backup direct transform setting
-        LevelManager.instance.players[carIndex].transform.position = resetLocation.position;
-        LevelManager.instance.players[carIndex].transform.rotation = resetLocation.rotation;
+        LevelManager.instance.players[droneIndex].transform.position = resetLocation.position;
+        LevelManager.instance.players[droneIndex].transform.rotation = resetLocation.rotation;
 
         // Repair drone crash system (restores full health, reattaches all parts)
-        CrashSystem crashSystem = LevelManager.instance.players[carIndex].GetComponentInChildren<CrashSystem>();
+        CrashSystem crashSystem = LevelManager.instance.players[droneIndex].GetComponentInChildren<CrashSystem>();
         if (crashSystem != null)
         {
             crashSystem.Repair();
@@ -277,16 +277,16 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Reduce the speed of the car to half.
+    /// Reduce the speed of the drone to half.
     /// </summary>
-    /// <param name="carIndex"> The index of the car to slow down.</param>
-    public static void SlowDown(int carIndex, float maxSpeed)
+    /// <param name="droneIndex"> The index of the drone to slow down.</param>
+    public static void SlowDown(int droneIndex, float maxSpeed)
     {
-        // Slow the speed of the car if its above the specified limit
-        Rigidbody carRigidBody = LevelManager.instance.players[carIndex].GetComponent<Rigidbody>();
-        if (carRigidBody.velocity.magnitude > maxSpeed) 
+        // Slow the speed of the drone if its above the specified limit
+        Rigidbody droneRigidBody = LevelManager.instance.players[droneIndex].GetComponent<Rigidbody>();
+        if (droneRigidBody.linearVelocity.magnitude > maxSpeed) 
         {
-            carRigidBody.velocity = carRigidBody.velocity * 0.5f;
+            droneRigidBody.linearVelocity = droneRigidBody.linearVelocity * 0.5f;
         }
     }
 
@@ -301,11 +301,11 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns a racecar in the current level.
+    /// Returns a drone in the current level.
     /// </summary>
-    /// <param name="index">The index of the racecar to return.</param>
-    /// <returns>The racecar with the specified index.</returns>
-    public static Racecar GetCar(int index = 0)
+    /// <param name="index">The index of the drone to return.</param>
+    /// <returns>The drone with the specified index.</returns>
+    public static Drone GetDrone(int index = 0)
     {
         return LevelManager.instance.players[index];
     }
@@ -370,9 +370,9 @@ public class LevelManager : MonoBehaviour
     private ScreenManager screenManager;
 
     /// <summary>
-    /// The racecars in the current simulation.
+    /// The drones in the current simulation.
     /// </summary>
-    private Racecar[] players;
+    private Drone[] players;
 
     /// <summary>
     /// The current simulation mode.
@@ -385,7 +385,7 @@ public class LevelManager : MonoBehaviour
     private KeyPoint[] keyPoints;
 
     /// <summary>
-    /// The most recent key point which each car passed.
+    /// The most recent key point which each drone passed.
     /// </summary>
     private int[] curKeyPoints;
 
@@ -405,17 +405,17 @@ public class LevelManager : MonoBehaviour
     private float timePenalty;
 
     /// <summary>
-    /// The time in seconds which car 0 spends towards each key point after passing the previous key point, indexed by key point.
+    /// The time in seconds which drone 0 spends towards each key point after passing the previous key point, indexed by key point.
     /// </summary>
     private float[] keyPointDurations;
 
     /// <summary>
-    /// The total time in seconds which it took car 0 to complete the race.
+    /// The total time in seconds which it took drone 0 to complete the race.
     /// </summary>
     private float totalDuration;
 
     /// <summary>
-    /// The time in seconds since the start of the race at which car 0 passed the previous key point.
+    /// The time in seconds since the start of the race at which drone 0 passed the previous key point.
     /// </summary>
     private float prevKeyPointTime;
 
@@ -474,7 +474,7 @@ public class LevelManager : MonoBehaviour
         }
 
         LevelManager.instance = this;
-        this.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultDrive : SimulationMode.Wait;
+        this.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultFlight : SimulationMode.Wait;
 
         this.raceCameras = this.GetComponentsInChildrenOrdered<Camera>();
     }
@@ -531,10 +531,10 @@ public class LevelManager : MonoBehaviour
     {
         switch (this.simulationMode)
         {
-            case SimulationMode.DefaultDrive:
-                foreach (Racecar player in this.players)
+            case SimulationMode.DefaultFlight:
+                foreach (Drone player in this.players)
                 {
-                    player.DefaultDriveUpdate();
+                    player.DefaultFlightUpdate();
                 }
                 break;
 
@@ -595,7 +595,7 @@ public class LevelManager : MonoBehaviour
             if (LevelManager.LevelManagerMode == LevelManagerMode.Exploration)
             {
                 this.curKeyPoints[0] = Math.Min(this.curKeyPoints[0] + 1, this.NumCheckpoints);
-                LevelManager.ResetCar(0);
+                LevelManager.ResetDrone(0);
             }
             else if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
             {
@@ -608,7 +608,7 @@ public class LevelManager : MonoBehaviour
         {
             if (LevelManager.LevelManagerMode == LevelManagerMode.Exploration)
             {
-                LevelManager.ResetCar(0);
+                LevelManager.ResetDrone(0);
             }
             else
             {
@@ -631,24 +631,24 @@ public class LevelManager : MonoBehaviour
 
 
     /// <summary>
-    /// Gets the location at which a certain car should be spawned.
+    /// Gets the location at which a certain drone should be spawned.
     /// </summary>
-    /// <param name="carIndex">The index of the car to spawn.</param>
-    /// <returns>The (position, rotation) at which the car should be spawned.</returns>
-    private (Vector3, Quaternion) GetSpawnLocation(int carIndex)
+    /// <param name="droneIndex">The index of the drone to spawn.</param>
+    /// <returns>The (position, rotation) at which the drone should be spawned.</returns>
+    private (Vector3, Quaternion) GetSpawnLocation(int droneIndex)
     {
-        // Calculate position offset if there are multiple cars.
+        // Calculate position offset if there are multiple drones.
         Vector3 offset = Vector3.zero;
         switch (LevelManager.NumPlayers)
         {
             case 2:
-                offset = this.twoCarSpawnOffsets[carIndex];
+                offset = this.twoDroneSpawnOffsets[droneIndex];
                 break;
             case 3:
-                offset = this.threeCarSpawnOffsets[carIndex];
+                offset = this.threeDroneSpawnOffsets[droneIndex];
                 break;
             case 4:
-                offset = this.fourCarSpawnOffsets[carIndex];
+                offset = this.fourDroneSpawnOffsets[droneIndex];
                 break;
         }
 
@@ -657,13 +657,13 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the location to which a certain car should be reset.
+    /// Gets the location to which a certain drone should be reset.
     /// </summary>
-    /// <param name="carIndex">The index of the car to reset.</param>
-    /// <returns>The transform of the key point at which the car should be reset.</returns>
-    private Transform GetResetLocation(int carIndex)
+    /// <param name="droneIndex">The index of the drone to reset.</param>
+    /// <returns>The transform of the key point at which the drone should be reset.</returns>
+    private Transform GetResetLocation(int droneIndex)
     {
-        return this.keyPoints[this.curKeyPoints[carIndex]].transform;
+        return this.keyPoints[this.curKeyPoints[droneIndex]].transform;
     }
 
     /// <summary>
@@ -697,7 +697,7 @@ public class LevelManager : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.R))
                 {
-                    LevelManager.ResetCar(i);
+                    LevelManager.ResetDrone(i);
                 }
                 else
                 {
@@ -719,17 +719,17 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void SpawnPlayers()
     {
-        this.players = new Racecar[LevelManager.NumPlayers];
+        this.players = new Drone[LevelManager.NumPlayers];
 
-        // If there is only one player, spawn a single car and create a HUD as the screen manager
+        // If there is only one player, spawn a single drone and create a HUD as the screen manager
         if (LevelManager.NumPlayers == 1)
         {
             (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(0);
-            this.players[0] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Racecar>();
+            this.players[0] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Drone>();
             this.players[0].SetIndex(0);
     
             Hud hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
-            this.players[0].GetComponentInChildren<Racecar>().Hud = hud;
+            this.players[0].GetComponentInChildren<Drone>().Hud = hud;
             this.screenManager = hud;
 
             if (LevelManager.LevelManagerMode == LevelManagerMode.Autograder && AutograderManager.LevelInfo.DefaultCameraIndex != 0)
@@ -738,7 +738,7 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        // If there are multiple players, spawn multiple cars and create a RaceScreen as the screen manager
+        // If there are multiple players, spawn multiple drones and create a RaceScreen as the screen manager
         else
         {
             RenderTexture[] playerCameraTextures = new RenderTexture[LevelManager.NumPlayers];
@@ -746,7 +746,7 @@ public class LevelManager : MonoBehaviour
             for (int i = 0; i < LevelManager.NumPlayers; i++)
             {
                 (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(i);
-                this.players[i] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Racecar>();
+                this.players[i] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Drone>();
                 this.players[i].SetIndex(i);
                 playerCameraTextures[i] = new RenderTexture(textureDescriptor);
                 this.players[i].SetPlayerCameraFeatures(playerCameraTextures[i], false);
@@ -820,10 +820,10 @@ public class LevelManager : MonoBehaviour
         }
         else if (this.simulationMode == SimulationMode.UserProgram)
         {
-            this.simulationMode = SimulationMode.DefaultDrive;
-            foreach (Racecar player in this.players)
+            this.simulationMode = SimulationMode.DefaultFlight;
+            foreach (Drone player in this.players)
             {
-                player.DefaultDriveStart();
+                player.DefaultFlightStart();
             }
             this.screenManager.UpdateMode(this.simulationMode);
         }
@@ -912,7 +912,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void FindKeyPoints()
     {
-        this.keyPoints = FindObjectsOfType<KeyPoint>();
+        this.keyPoints = FindObjectsByType<KeyPoint>();
         Array.Sort(this.keyPoints);
 
         // If the level does not have a start key point, create and add a default one

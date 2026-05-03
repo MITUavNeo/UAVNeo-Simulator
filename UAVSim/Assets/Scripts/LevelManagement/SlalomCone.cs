@@ -26,7 +26,7 @@ public class SlalomCone : MonoBehaviour
     private float timePenalty = 5;
 
     /// <summary>
-    /// The max speed the car can have before getting penalized if they pass the cone on the incorrect side.
+    /// The max speed the drone can have before getting penalized if they pass the cone on the incorrect side.
     /// </summary>
     [SerializeField]
     private float maxSpeed = 8;
@@ -56,7 +56,7 @@ public class SlalomCone : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // If the collider is a player, cause the player to fail
-        Racecar player = other.GetComponentInParent<Racecar>();
+        Drone player = other.GetComponentInParent<Drone>();
         if (player != null)
         {
             switch (this.penalty)
@@ -65,7 +65,7 @@ public class SlalomCone : MonoBehaviour
                     LevelManager.HandleFailure(player.Index, isRed ? SlalomCone.redMessage : SlalomCone.blueMessage);
                     break;
                 case SlalomConePenalty.Reset:
-                    LevelManager.ResetCar(player.Index);
+                    LevelManager.ResetDrone(player.Index);
                     break;
                 case SlalomConePenalty.TimePenalty:
                     LevelManager.AddTimePenalty(this.timePenalty);

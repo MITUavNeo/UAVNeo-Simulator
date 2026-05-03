@@ -36,9 +36,9 @@ public class AutograderLevelInfo
     public int DefaultCameraIndex = 0;
 
     /// <summary>
-    /// True if we should not continue to the next level until the car stops.
+    /// True if we should not continue to the next level until the drone stops.
     /// </summary>
-    /// <remarks>If the car does not stop before the time limit, no points are deducted.</remarks>
+    /// <remarks>If the drone does not stop before the time limit, no points are deducted.</remarks>
     public bool DoNotProceedUntilStopped = false;
 
     /// <summary>

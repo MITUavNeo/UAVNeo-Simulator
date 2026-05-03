@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 /// <summary>
-/// A cone which measures and displays the distance to the car.
+/// A cone which measures and displays the distance to the drone.
 /// </summary>
 public class DistanceCone : MonoBehaviour
 {
@@ -67,15 +67,15 @@ public class DistanceCone : MonoBehaviour
     }
 
     /// <summary>
-    /// The distance between the cone and the car in cm, or NaN if the cone cannot see the car.
+    /// The distance between the cone and the drone in cm, or NaN if the cone cannot see the drone.
     /// </summary>
     protected float Distance
     {
         get
         {
-            if (Physics.Raycast(this.Center, LevelManager.GetCar().Center - this.Center, out RaycastHit raycastHit, Constants.RaycastMaxDistance, Constants.IgnoreUIMask))
+            if (Physics.Raycast(this.Center, LevelManager.GetDrone().Center - this.Center, out RaycastHit raycastHit, Constants.RaycastMaxDistance, Constants.IgnoreUIMask))
             {
-                if (raycastHit.collider.GetComponentInParent<Racecar>() != null)
+                if (raycastHit.collider.GetComponentInParent<Drone>() != null)
                 {
                     return 10 * (raycastHit.distance - this.Radius);
                 }

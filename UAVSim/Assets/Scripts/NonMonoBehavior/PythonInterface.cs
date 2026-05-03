@@ -13,12 +13,12 @@ public class PythonInterface
 {
     #region Constants
     /// <summary>
-    /// The current version of the protocol used to communicate with racecar_core.
+    /// The current version of the protocol used to communicate with drone_core.
     /// </summary>
     /// <remarks>
-    /// When the communication protocol between RacecarSim and racecar_core are changed, this version number
-    /// should be incremented both here and in racecar_core_sim.py. This allows us to immediately detect
-    /// if a user attempts to use incompatible versions of RacecarSim and racecar_core.
+    /// When the communication protocol between UAVSim and drone_core are changed, this version number
+    /// should be incremented both here and in drone_core_sim.py. This allows us to immediately detect
+    /// if a user attempts to use incompatible versions of UAVSim and drone_core.
     /// </remarks>
     private const int version = 1;
 
@@ -53,7 +53,7 @@ public class PythonInterface
 
     #region Public
     /// <summary>
-    /// An array in which each entry indicates whether the racecar of the same index is connected to a Python script.
+    /// An array in which each entry indicates whether the drone of the same index is connected to a Python script.
     /// </summary>
     public bool[] ConnectedPrograms
     {
@@ -141,10 +141,10 @@ public class PythonInterface
         python_finished,
         python_send_next,
         python_exit,
-        racecar_go,
-        racecar_set_start_update,
-        racecar_get_delta_time,
-        racecar_set_update_slow_time,
+        drone_go,
+        drone_set_start_update,
+        drone_get_delta_time,
+        drone_set_update_slow_time,
         camera_get_color_image,
         camera_get_depth_image,
         camera_get_width,
@@ -158,8 +158,8 @@ public class PythonInterface
         _reserved_22,             // was drive_set_speed_angle (removed)
         _reserved_23,             // was drive_stop (removed)
         _reserved_24,             // was drive_set_max_speed (removed)
-        lidar_get_num_samples,    // Legacy: LIDAR removed from drone — returns 0
-        lidar_get_samples,        // Legacy: LIDAR removed from drone — returns empty
+        _reserved_25,             // was lidar_get_num_samples (removed)
+        _reserved_26,             // was lidar_get_samples (removed)
         physics_get_linear_acceleration,
         physics_get_angular_velocity,
         // Drone-specific headers
@@ -185,7 +185,7 @@ public class PythonInterface
         python_exception,
         no_free_car,
         python_outdated,
-        racecarsim_outdated,
+        sim_outdated,
         fragment_mismatch
     }
 
@@ -201,7 +201,7 @@ public class PythonInterface
     private readonly UdpClient udpClient;
 
     /// <summary>
-    /// The UDP endpoints of the Python scripts(s) currently connected to RacecarSim.
+    /// The UDP endpoints of the Python scripts(s) currently connected to UAVSim.
     /// </summary>
     private readonly List<IPEndPoint> pythonEndPoints;
 
@@ -209,7 +209,7 @@ public class PythonInterface
     /// Connect the sync client to a Python script.
     /// </summary>
     /// <param name="remoteEndPoint">The endpoint (IP + port) of the connecting Python script.</param>
-    /// <returns>The index of the car with which the script is paired, or null if the script could not be paired.</returns>
+    /// <returns>The index of the drone with which the script is paired, or null if the script could not be paired.</returns>
     private int? ConnectSyncClient(IPEndPoint remoteEndPoint)
     {
         IPEndPoint endPoint = new IPEndPoint(remoteEndPoint.Address, remoteEndPoint.Port);
@@ -236,7 +236,7 @@ public class PythonInterface
             }
             else
             {
-                // Every race car is already connected
+                // Every drone is already connected
                 return null;
             }
         }
@@ -252,13 +252,13 @@ public class PythonInterface
     private void RemoveSyncClient(int pythonPort)
     {
         // Set the endpoint to null rather than removing it from the list to maintain
-        // the mapping of remaining endpoints to cars
+        // the mapping of remaining endpoints to drones
         for (int i = 0; i < this.pythonEndPoints.Count; i++)
         {
             if (this.pythonEndPoints[i]?.Port == pythonPort)
             {
                 this.pythonEndPoints[i] = null;
-                LevelManager.GetCar(i).Flight.Stop();
+                LevelManager.GetDrone(i).Flight.Stop();
                 break;
             }
         }
@@ -292,7 +292,7 @@ public class PythonInterface
                 continue;
             }
 
-            Racecar racecar = LevelManager.GetCar(i);
+            Drone drone = LevelManager.GetDrone(i);
             IPEndPoint endPoint = this.pythonEndPoints[i];
 
             // Tell Python what function to call
@@ -318,7 +318,7 @@ public class PythonInterface
                 {
                     case Header.error:
                         Error errorCode = (Error)data[1];
-                        HandleError($"Error code [{errorCode}] sent from the Python script controlling car {i}.", errorCode);
+                        HandleError($"Error code [{errorCode}] sent from the Python script controlling drone {i}.", errorCode);
                         pythonFinished = true;
                         break;
 
@@ -331,17 +331,17 @@ public class PythonInterface
                         pythonFinished = true;
                         break;
 
-                    case Header.racecar_get_delta_time:
+                    case Header.drone_get_delta_time:
                         sendData = BitConverter.GetBytes(Time.deltaTime);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.camera_get_color_image:
-                        pythonFinished = !this.SendFragmented(racecar.Camera.ColorImageRaw, 32, endPoint);
+                        pythonFinished = !this.SendFragmented(drone.Camera.ColorImageRaw, 32, endPoint);
                         break;
 
                     case Header.camera_get_depth_image:
-                        sendData = racecar.Camera.DepthImageRaw;
+                        sendData = drone.Camera.DepthImageRaw;
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
@@ -391,98 +391,86 @@ public class PythonInterface
 
                     // Piloting stick command: drone.controller.flight_send_pcmd(pitch, roll, yaw, throttle)
                     case Header.flight_send_pcmd:
-                        racecar.Flight.ForwardSpeed = BitConverter.ToSingle(data, 4);   // pitch
-                        racecar.Flight.StrafeSpeed = BitConverter.ToSingle(data, 8);    // roll
-                        racecar.Flight.YawSpeed = BitConverter.ToSingle(data, 12);      // yaw
-                        racecar.Flight.VerticalSpeed = BitConverter.ToSingle(data, 16); // throttle
+                        drone.Flight.ForwardSpeed = BitConverter.ToSingle(data, 4);   // pitch
+                        drone.Flight.StrafeSpeed = BitConverter.ToSingle(data, 8);    // roll
+                        drone.Flight.YawSpeed = BitConverter.ToSingle(data, 12);      // yaw
+                        drone.Flight.VerticalSpeed = BitConverter.ToSingle(data, 16); // throttle
                         break;
 
                     case Header.flight_stop:
-                        racecar.Flight.Stop();
+                        drone.Flight.Stop();
                         break;
 
                     case Header.flight_set_max_speed:
-                        racecar.Flight.MaxSpeed = BitConverter.ToSingle(data, 4);
+                        drone.Flight.MaxSpeed = BitConverter.ToSingle(data, 4);
                         break;
 
                     case Header.physics_get_linear_velocity:
-                        Vector3 linearVelocity = racecar.Physics.LinearVelocity;
+                        Vector3 linearVelocity = drone.Physics.LinearVelocity;
                         sendData = new byte[sizeof(float) * 3];
                         Buffer.BlockCopy(new float[] { linearVelocity.x, linearVelocity.y, linearVelocity.z }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
-                    case Header.lidar_get_num_samples:
-                        // LIDAR removed — return 0 samples
-                        sendData = BitConverter.GetBytes(0);
-                        this.udpClient.Send(sendData, sendData.Length, endPoint);
-                        break;
-
-                    case Header.lidar_get_samples:
-                        // LIDAR removed — return empty array
-                        sendData = new byte[0];
-                        this.udpClient.Send(sendData, sendData.Length, endPoint);
-                        break;
-
                     case Header.physics_get_linear_acceleration:
-                        Vector3 linearAcceleration = racecar.Physics.LinearAccceleration;
+                        Vector3 linearAcceleration = drone.Physics.LinearAccceleration;
                         sendData = new byte[sizeof(float) * 3];
                         Buffer.BlockCopy(new float[] { linearAcceleration.x, linearAcceleration.y, linearAcceleration.z }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.physics_get_angular_velocity:
-                        Vector3 angularVelocity = racecar.Physics.AngularVelocity;
+                        Vector3 angularVelocity = drone.Physics.AngularVelocity;
                         sendData = new byte[sizeof(float) * 3];
                         Buffer.BlockCopy(new float[] { angularVelocity.x, angularVelocity.y, angularVelocity.z }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.camera_get_downward_image:
-                        pythonFinished = !this.SendFragmented(racecar.Camera.DownwardRGBImageRaw, 32, endPoint);
+                        pythonFinished = !this.SendFragmented(drone.Camera.DownwardRGBImageRaw, 32, endPoint);
                         break;
 
                     case Header.physics_get_altitude:
-                        sendData = BitConverter.GetBytes(racecar.Physics.Altitude);
+                        sendData = BitConverter.GetBytes(drone.Physics.Altitude);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.physics_get_attitude:
-                        Vector3 attitude = racecar.Physics.Attitude;
+                        Vector3 attitude = drone.Physics.Attitude;
                         sendData = new byte[sizeof(float) * 3];
                         Buffer.BlockCopy(new float[] { attitude.x, attitude.y, attitude.z }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.physics_get_gps:
-                        Vector3 gps = racecar.Physics.GPS;
+                        Vector3 gps = drone.Physics.GPS;
                         sendData = new byte[sizeof(float) * 3];
                         Buffer.BlockCopy(new float[] { gps.x, gps.y, gps.z }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.flight_takeoff:
-                        bool didTakeoff = !racecar.Flight.IsArmed;
+                        bool didTakeoff = !drone.Flight.IsArmed;
                         if (didTakeoff)
                         {
-                            racecar.Flight.Arm();
+                            drone.Flight.Arm();
                         }
                         sendData = BitConverter.GetBytes(didTakeoff);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.flight_land:
-                        bool didLand = racecar.Flight.IsArmed && !racecar.Flight.IsLanding;
+                        bool didLand = drone.Flight.IsArmed && !drone.Flight.IsLanding;
                         if (didLand)
                         {
-                            racecar.Flight.BeginLanding();
+                            drone.Flight.BeginLanding();
                         }
                         sendData = BitConverter.GetBytes(didLand);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     default:
-                        Debug.LogError($">> Error: The function {header} is not supported by RacecarSim.");
+                        Debug.LogError($">> Error: The function {header} is not supported by UAVSim.");
                         pythonFinished = true;
                         break;
                 }
@@ -605,7 +593,7 @@ public class PythonInterface
             byte[] data = this.udpClientAsync.Receive(ref receiveEndPoint);
             Header header = (Header)data[0];
 
-            Racecar racecar = LevelManager.GetCar();
+            Drone drone = LevelManager.GetDrone();
 
             byte[] sendData;
             switch (header)
@@ -622,21 +610,21 @@ public class PythonInterface
                         else
                         {
                             // TODO: display this message to the screen?
-                            Debug.LogError($"Attempted to connect a Python script from port [{receiveEndPoint.Port}], but every racecar already has a connected Python script.");
+                            Debug.LogError($"Attempted to connect a Python script from port [{receiveEndPoint.Port}], but every drone already has a connected Python script.");
                             sendData = new byte[] { (byte)Header.error, (byte)Error.no_free_car };
                         }
                     }
                     else if (PythonInterface.version > pythonVersion)
                     {
                         // TODO: display this message to the screen?
-                        Debug.LogError("The Python script is using an outdated and incompatible version of racecar_core. Please update you Python racecar libraries to the newest version.");
+                        Debug.LogError("The Python script is using an outdated and incompatible version of drone_core. Please update you Python drone libraries to the newest version.");
                         sendData = new byte[] { (byte)Header.error, (byte)Error.python_outdated };
                     }
                     else
                     {
                         // TODO: display this message to the screen?
-                        Debug.LogError("The Python script is using a newer and incompatible version of racecar_core. Please download the newest version of RacecarSim.");
-                        sendData = new byte[] { (byte)Header.error, (byte)Error.racecarsim_outdated };
+                        Debug.LogError("The Python script is using a newer and incompatible version of drone_core. Please download the newest version of UAVSim.");
+                        sendData = new byte[] { (byte)Header.error, (byte)Error.sim_outdated };
                     }
                     this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
                     break;
@@ -646,26 +634,20 @@ public class PythonInterface
                     break;
 
                 case Header.camera_get_color_image:
-                    this.SendFragmentedAsync(racecar.Camera.GetColorImageRawAsync(), 32, receiveEndPoint);
+                    this.SendFragmentedAsync(drone.Camera.GetColorImageRawAsync(), 32, receiveEndPoint);
                     break;
 
                 case Header.camera_get_depth_image:
-                    sendData = racecar.Camera.GetDepthImageRawAsync();
+                    sendData = drone.Camera.GetDepthImageRawAsync();
                     this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
                     break;
 
                 case Header.camera_get_downward_image:
-                    this.SendFragmentedAsync(racecar.Camera.GetDownwardRGBImageRawAsync(), 32, receiveEndPoint);
-                    break;
-
-                case Header.lidar_get_samples:
-                    // LIDAR removed — return empty array
-                    sendData = new byte[0];
-                    this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
+                    this.SendFragmentedAsync(drone.Camera.GetDownwardRGBImageRawAsync(), 32, receiveEndPoint);
                     break;
 
                 default:
-                    Debug.LogError($">> Error: The function {header} is not supported by RacecarSim for async calls.");
+                    Debug.LogError($">> Error: The function {header} is not supported by UAVSim for async calls.");
                     break;
             }
         }
