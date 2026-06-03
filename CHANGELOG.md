@@ -11,6 +11,14 @@ Module 6, autograder integration, and a major refactor that finishes the migrati
 from the upstream RACECAR Neo Simulator fork to a standalone UAV/drone simulator.
 Pairs with the drone-first naming in [`uav-neo-library`](https://github.com/MITUavNeo/uav-neo-library).
 
+The branch `gael/uav-unity-scenes` was the **initial v0.0.3 version** of this
+work (Module 6 scene authoring, `BuildAltitudeGates`, line-color randomizer,
+`GRGAutograderSetup`). PR #2 opened that branch against `main` on 2026-04-30 and
+was closed as superseded on 2026-05-02 once Chris's `8f472b3` refactor adopted
+the scene topology and scripts (with edits) directly into `main`. The branch was
+retained on the remote as a reference, then deleted on 2026-06-02 — the work it
+represents now lives on `main` via this v0.0.3 entry.
+
 ### Added
 - Module 6 lab content.
 - Autograder wiring via `GRGAutograderSetup` (directory creation before `CopyAsset`,
