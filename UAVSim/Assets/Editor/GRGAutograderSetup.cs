@@ -14,16 +14,21 @@ using UnityEngine.SceneManagement;
 /// Module 3a — DestinationCylinder placement already correct; 3D object models
 ///             must be placed manually per variant scene.
 /// Module 3b — adds CoordinateThresholdTask: z >= 38 (drone reaches red room).
-/// Module 4  — adds ProximityTask: within 3 m of SAR target at (15, 0, 18).
+/// Module 4  — copies Module4_SearchAndRescue as the autograder base (preserves
+///             SAR_Environment, GridRef markers, etc.), removes WinZone_3m, swaps
+///             LevelManager → LevelManagerAutograder, adds ProximityTask (3 m at
+///             landing pad). Re-running is idempotent: skips copy if scene exists,
+///             skips task if AutograderTask_Proximity already present.
 /// Module 5  — adds CoordinateThresholdTask: x >= 16 (drone exits maze).
 /// Module 6  — duplicates Module6_LineFollowing as autograder scene, adds three
 ///             sequential CoordinateThresholdTask checkpoints along the F1 circuit,
-///             and registers the new scene in EditorBuildSettings (index 158).
+///             and registers the new scene in EditorBuildSettings (index 25).
 /// </summary>
 public static class GRGAutograderSetup
 {
     // Scene paths (relative to Assets/)
     private const string Mod3bScene    = "Assets/Scenes/UAV_Neo_Labs/Autograder/Module3b_ArUcoMaze/Mod3b_1_ArUcoMaze.unity";
+    private const string Mod4Source    = "Assets/Scenes/UAV_Neo_Labs/Module4_SearchAndRescue.unity";
     private const string Mod4Scene     = "Assets/Scenes/UAV_Neo_Labs/Autograder/Module4_SAR/Mod4_1_SAR.unity";
     private const string Mod5Scene     = "Assets/Scenes/UAV_Neo_Labs/Autograder/Module5_Maze/Mod5_1_Maze.unity";
     private const string Mod6Source    = "Assets/Scenes/UAV_Neo_Labs/Module6_LineFollowing.unity";
@@ -70,7 +75,7 @@ public static class GRGAutograderSetup
             "GRG Autograder Setup",
             $"Done. {summary}.\n\n" +
             $"{Sym(mod3b)} Module 3b: CoordinateThresholdTask (z >= 38)\n" +
-            $"{Sym(mod4)} Module 4:  ProximityTask (3 m radius at SAR target)\n" +
+            $"{Sym(mod4)} Module 4:  Copy exploration scene → remove WinZone → swap LevelManagerAutograder → ProximityTask (3 m)\n" +
             $"{Sym(mod5)} Module 5:  CoordinateThresholdTask (x >= 16)\n" +
             $"{Sym(mod6)} Module 6:  3-checkpoint line-follow autograder scene\n\n" +
             "Legend:  ✓ applied   – already configured   ✗ failed (see Console)\n\n" +
@@ -120,34 +125,139 @@ public static class GRGAutograderSetup
     }
 
     // ── Module 4 — SAR, complete when drone is within 3 m of landing pad ──
+    //
+    // The autograder scene is rebuilt from the exploration scene so it retains the
+    // full SAR environment (terrain, SAR_Environment, GridRef markers, etc.).
+    // WinZone_3m is removed, LevelManagerAutograder replaces LevelManager, and a
+    // ProximityTask is added at the landing pad centre.
 
     private static SetupResult SetupMod4()
     {
-        Scene scene = EditorSceneManager.OpenScene(Mod4Scene, OpenSceneMode.Single);
-        if (!scene.IsValid()) { Debug.LogError($"[GRGAutograderSetup] Could not open {Mod4Scene}"); return SetupResult.Failed; }
+        bool didAnything = false;
 
+        // ── 1. Copy exploration scene if autograder scene is missing or empty ──
+        bool agSceneExists = System.IO.File.Exists(
+            Mod4Scene.Replace("Assets/", Application.dataPath + "/"));
+        bool sourceExists  = System.IO.File.Exists(
+            Mod4Source.Replace("Assets/", Application.dataPath + "/"));
+
+        if (!sourceExists)
+        {
+            Debug.LogError($"[GRGAutograderSetup] Source scene not found: {Mod4Source}");
+            return SetupResult.Failed;
+        }
+
+        if (!agSceneExists)
+        {
+            // Ensure target directory exists
+            string targetDir = System.IO.Path.GetDirectoryName(Mod4Scene).Replace('\\', '/');
+            if (!AssetDatabase.IsValidFolder(targetDir))
+            {
+                string[] segments = targetDir.Split('/');
+                string accum = segments[0];
+                for (int i = 1; i < segments.Length; i++)
+                {
+                    string next = accum + "/" + segments[i];
+                    if (!AssetDatabase.IsValidFolder(next))
+                        AssetDatabase.CreateFolder(accum, segments[i]);
+                    accum = next;
+                }
+            }
+
+            bool copied = AssetDatabase.CopyAsset(Mod4Source, Mod4Scene);
+            if (!copied)
+            {
+                Debug.LogError($"[GRGAutograderSetup] Failed to copy {Mod4Source} → {Mod4Scene}");
+                return SetupResult.Failed;
+            }
+            AssetDatabase.Refresh();
+            Debug.Log($"[GRGAutograderSetup] Copied exploration scene to {Mod4Scene}.");
+            didAnything = true;
+        }
+
+        // ── 2. Open the autograder scene ──
+        Scene scene = EditorSceneManager.OpenScene(Mod4Scene, OpenSceneMode.Single);
+        if (!scene.IsValid())
+        {
+            Debug.LogError($"[GRGAutograderSetup] Could not open {Mod4Scene}");
+            return SetupResult.Failed;
+        }
+
+        // ── 3. Remove WinZone_3m (exploration win trigger, not needed in autograder) ──
+        var winZone = GameObject.Find("WinZone_3m");
+        if (winZone != null)
+        {
+            Object.DestroyImmediate(winZone);
+            Debug.Log($"[GRGAutograderSetup] {Mod4Scene}: removed WinZone_3m.");
+            didAnything = true;
+        }
+
+        // ── 4. Swap LevelManager prefab → LevelManagerAutograder ──
+        // Find the LevelManager prefab GUID and replace with LevelManagerAutograder.
+        // We do this by finding the root GameObject whose name is "LevelManager"
+        // (the prefab instance name) and replacing it.
+        var lmGuid   = "001a61d17ded0ce42957c20674cb5a39"; // LevelManager.prefab
+        var lmAgGuid = "21b89b947ff1b0b48ae867bb844bf8d6"; // LevelManagerAutograder.prefab
+        var lmAgPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            AssetDatabase.GUIDToAssetPath(lmAgGuid));
+
+        var lmGo = GameObject.Find("LevelManager");
+        if (lmGo != null && lmAgPrefab != null)
+        {
+            var prefabStatus = UnityEditor.PrefabUtility.GetPrefabInstanceStatus(lmGo);
+            string srcGuid = "";
+            if (prefabStatus != UnityEditor.PrefabInstanceStatus.NotAPrefab)
+            {
+                var srcPrefab = UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(lmGo);
+                if (srcPrefab != null)
+                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(srcPrefab, out srcGuid, out long _);
+            }
+
+            if (srcGuid == lmGuid || lmGo.name == "LevelManager")
+            {
+                var pos = lmGo.transform.position;
+                var rot = lmGo.transform.rotation;
+                Object.DestroyImmediate(lmGo);
+                var lmAgGo = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(lmAgPrefab);
+                lmAgGo.transform.SetPositionAndRotation(pos, rot);
+                Debug.Log($"[GRGAutograderSetup] {Mod4Scene}: replaced LevelManager with LevelManagerAutograder.");
+                didAnything = true;
+            }
+        }
+        else if (GameObject.Find("LevelManagerAutograder") != null)
+        {
+            Debug.Log($"[GRGAutograderSetup] {Mod4Scene}: LevelManagerAutograder already present, skipping prefab swap.");
+        }
+        else
+        {
+            Debug.LogWarning($"[GRGAutograderSetup] {Mod4Scene}: could not find LevelManager or LevelManagerAutograder prefab — prefab swap skipped.");
+        }
+
+        // ── 5. Add ProximityTask if not already present ──
         const string taskName = "AutograderTask_Proximity";
         if (GameObject.Find(taskName) != null)
         {
-            Debug.Log($"[GRGAutograderSetup] {Mod4Scene}: task already exists, skipping.");
-            EditorSceneManager.CloseScene(scene, true);
-            return SetupResult.Skipped;
+            Debug.Log($"[GRGAutograderSetup] {Mod4Scene}: {taskName} already exists, skipping.");
         }
+        else
+        {
+            // Landing pad centre is at (15, 0.1, 18)
+            var go = new GameObject(taskName);
+            go.transform.position = new Vector3(15f, 0.1f, 18f);
 
-        // SAR target is at (15, 0, 18) — place task at the landing pad centre
-        var go = new GameObject(taskName);
-        go.transform.position = new Vector3(15f, 0.1f, 18f);
+            var task = go.AddComponent<ProximityTask>();
+            var so = new SerializedObject(task);
+            so.FindProperty("completionRadius").floatValue = 3f;
+            so.FindProperty("points").floatValue           = 10f;
+            so.ApplyModifiedPropertiesWithoutUndo();
 
-        var task = go.AddComponent<ProximityTask>();
-        var so = new SerializedObject(task);
-        so.FindProperty("completionRadius").floatValue = 3f;
-        so.FindProperty("points").floatValue           = 10f;
-        so.ApplyModifiedPropertiesWithoutUndo();
+            Debug.Log($"[GRGAutograderSetup] {Mod4Scene}: ProximityTask (3 m radius) added at {go.transform.position}.");
+            didAnything = true;
+        }
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
-        Debug.Log($"[GRGAutograderSetup] {Mod4Scene}: ProximityTask (3 m radius) added at {go.transform.position}.");
-        return SetupResult.Applied;
+        return didAnything ? SetupResult.Applied : SetupResult.Skipped;
     }
 
     // ── Module 5 — Maze, complete when drone exits (x >= 16) ──
@@ -315,9 +425,9 @@ public static class GRGAutograderSetup
             Debug.Log($"[GRGAutograderSetup] {Mod6AgScene} already in Build Settings at index {assignedIndex}.");
         }
 
-        if (assignedIndex != 158)
+        if (assignedIndex != 25)
         {
-            Debug.LogWarning($"[GRGAutograderSetup] Expected build index 158 but got {assignedIndex}. " +
+            Debug.LogWarning($"[GRGAutograderSetup] Expected build index 25 but got {assignedIndex}. " +
                              $"Update LevelCollection.cs: AutograderBuildIndex = {assignedIndex} for Module 6.");
         }
 
