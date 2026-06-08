@@ -315,6 +315,24 @@ public class LevelCollection
                         }
                     }
                 },
+                new LevelInfo()
+                {
+                    DisplayName = "Module 7 - Grand Prix",
+                    BuildIndex = 26,
+                    HelpMessage = "The Beaver Warrior Challenge! Complete all 5 sections: Gate Run → Aerial Slalom (ArUco) → SAR Zone → Speed Corridor → Line Following.",
+                    AutograderBuildIndex = 27,
+                    AutograderLevelCode = "mod7gp",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Module 7 - Grand Prix",
+                            Description = "Complete the full Beaver Warrior course: fly the gate circuit, navigate the ArUco slalom, find the SAR target, survive the speed corridor, and follow the line. 20 pts per section.",
+                            MaxPoints = 100,
+                            TimeLimit = 600
+                        }
+                    }
+                },
             }
         },
     };
