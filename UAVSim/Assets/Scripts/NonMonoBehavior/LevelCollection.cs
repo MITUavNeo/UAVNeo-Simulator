@@ -317,6 +317,42 @@ public class LevelCollection
                 },
             }
         },
+
+        new LevelCollection()
+        {
+            DisplayName = "Final Challenge",
+            ShortName = "Final",
+            Levels = new LevelInfo[]
+            {
+                new LevelInfo()
+                {
+                    DisplayName = "Grand Prix",
+                    BuildIndex = 26,
+                    HelpMessage = "The Beaver Warrior Challenge! Complete all 5 sections in order: Gate Run → Aerial Slalom (ArUco) → SAR Zone → Speed Corridor → Line Following.",
+                    AutograderBuildIndex = 27,
+                    AutograderLevelCode = "grandprix",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Grand Prix",
+                            Description = "Complete the Beaver Warrior course: gate circuit, ArUco slalom, SAR target, speed corridor, line following. 5 pts per section.",
+                            MaxPoints = 25,
+                            TimeLimit = 600,
+                            TimeBonuses = new Vector2[]
+                            {
+                                new Vector2(240, 3),
+                                new Vector2(300, 2),
+                                new Vector2(360, 1),
+                                new Vector2(480, 0),
+                                new Vector2(540, -1),
+                                new Vector2(float.PositiveInfinity, -3)
+                            }
+                        }
+                    }
+                },
+            }
+        },
     };
     #endregion
 

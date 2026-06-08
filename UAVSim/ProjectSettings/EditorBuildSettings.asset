@@ -83,4 +83,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module6_LineFollow/Mod6_1_LineFollow.unity
     guid: d07ff52fb5c96d247aa593f205828487
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/GrandPrix.unity
+    guid: 6bd6bdf396c00974491abcacf219aff6
+  - enabled: 1
+    path: Assets/Scenes/UAV_Neo_Labs/Autograder/GrandPrix/GrandPrix_Autograder.unity
+    guid: 9802c1b6445e2c141a22fcec57b657f5
   m_configObjects: {}
