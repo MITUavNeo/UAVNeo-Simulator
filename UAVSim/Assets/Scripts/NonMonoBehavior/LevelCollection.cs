@@ -328,7 +328,7 @@ public class LevelCollection
                 {
                     DisplayName = "2026 Final UAV",
                     BuildIndex = 26,
-                    HelpMessage = "The Beaver Warrior Challenge! Complete all 5 sections in order: Gate Run → Aerial Slalom (ArUco) → SAR Zone → Speed Corridor → Line Following.",
+                    HelpMessage = "The Beaver Warrior Challenge! Complete all 7 sections in order: Gate Run → Aerial Slalom → Figure-8 Hoops (altitude ~20m) → Tunnel → SAR Zone → Speed Corridor → Line Following.",
                     AutograderBuildIndex = 27,
                     AutograderLevelCode = "grandprix",
                     AutograderLevels = new AutograderLevelInfo[]
@@ -336,16 +336,16 @@ public class LevelCollection
                         new AutograderLevelInfo()
                         {
                             Title = "Grand Prix",
-                            Description = "Complete the Beaver Warrior course: gate circuit, ArUco slalom, SAR target, speed corridor, line following. 5 pts per section.",
-                            MaxPoints = 25,
-                            TimeLimit = 600,
+                            Description = "Complete all 7 sections in order: Gate Run → Aerial Slalom → Figure-8 Hoops → Tunnel → SAR Zone → Speed Corridor → Line Following. 5 pts per section.",
+                            MaxPoints = 35,
+                            TimeLimit = 720,
                             TimeBonuses = new Vector2[]
                             {
-                                new Vector2(240, 3),
-                                new Vector2(300, 2),
-                                new Vector2(360, 1),
-                                new Vector2(480, 0),
-                                new Vector2(540, -1),
+                                new Vector2(300, 3),
+                                new Vector2(360, 2),
+                                new Vector2(480, 1),
+                                new Vector2(600, 0),
+                                new Vector2(660, -1),
                                 new Vector2(float.PositiveInfinity, -3)
                             }
                         }
