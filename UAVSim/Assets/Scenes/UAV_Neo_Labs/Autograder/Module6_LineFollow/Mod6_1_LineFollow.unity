@@ -3751,6 +3751,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1530841977}
   - component: {fileID: 1530841976}
+  - component: {fileID: 1530841978}
   m_Layer: 0
   m_Name: AutograderManager_Mod6
   m_TagString: Untagged
@@ -3788,6 +3789,24 @@ Transform:
   - {fileID: 511480872}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1530841978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530841975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77f079ca15082a2498b208f6bbbec15a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControllerOverride
+  buttonPresses: 
+  heldButtonUnity: 8
+  triggerValues: {x: 0, y: 0}
+  joystickValues:
+  - {x: 0, y: 0}
+  - {x: 0, y: 0}
 --- !u!1 &1640157272
 GameObject:
   m_ObjectHideFlags: 0
@@ -5446,22 +5465,22 @@ PrefabInstance:
     - target: {fileID: 3251375272970256870, guid: 96abfdc38e474524fa4d7fe555f041bd,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.8754261
       objectReference: {fileID: 0}
     - target: {fileID: 3251375272970256870, guid: 96abfdc38e474524fa4d7fe555f041bd,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0.4082179
       objectReference: {fileID: 0}
     - target: {fileID: 3251375272970256870, guid: 96abfdc38e474524fa4d7fe555f041bd,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.2345698
       objectReference: {fileID: 0}
     - target: {fileID: 3251375272970256870, guid: 96abfdc38e474524fa4d7fe555f041bd,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.10938169
       objectReference: {fileID: 0}
     - target: {fileID: 3251375272970256870, guid: 96abfdc38e474524fa4d7fe555f041bd,
         type: 3}
