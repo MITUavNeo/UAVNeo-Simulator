@@ -326,7 +326,7 @@ public class LevelCollection
             {
                 new LevelInfo()
                 {
-                    DisplayName = "Grand Prix",
+                    DisplayName = "2026 Final UAV",
                     BuildIndex = 26,
                     HelpMessage = "The Beaver Warrior Challenge! Complete all 5 sections in order: Gate Run → Aerial Slalom (ArUco) → SAR Zone → Speed Corridor → Line Following.",
                     AutograderBuildIndex = 27,
