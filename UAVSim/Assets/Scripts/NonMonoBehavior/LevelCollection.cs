@@ -328,7 +328,7 @@ public class LevelCollection
                 {
                     DisplayName = "2026 Final UAV",
                     BuildIndex = 26,
-                    HelpMessage = "The Beaver Warrior Challenge! Complete all 7 sections in order: Gate Run → Aerial Slalom → Figure-8 Hoops (altitude ~20m) → Tunnel → SAR Zone → Speed Corridor → Line Following.",
+                    HelpMessage = "The Beaver Warrior Challenge! Complete all 9 tasks in order: Figure-8 → Gate Run → ArUco Maze → Aerial Slalom → Tunnel → Speed Corridor → SAR Detect → SAR Land → Line Following.",
                     AutograderBuildIndex = 27,
                     AutograderLevelCode = "grandprix",
                     AutograderLevels = new AutograderLevelInfo[]
@@ -336,8 +336,8 @@ public class LevelCollection
                         new AutograderLevelInfo()
                         {
                             Title = "Grand Prix",
-                            Description = "Complete all 7 sections in order: Gate Run → Aerial Slalom → Figure-8 Hoops → Tunnel → SAR Zone → Speed Corridor → Line Following. 5 pts per section.",
-                            MaxPoints = 35,
+                            Description = "Complete all 9 tasks in order: Figure-8 → Gate Run → ArUco Maze → Aerial Slalom → Tunnel → Speed Corridor → SAR Detect → SAR Land → Line Following. 5 pts per task.",
+                            MaxPoints = 45,
                             TimeLimit = 720,
                             TimeBonuses = new Vector2[]
                             {

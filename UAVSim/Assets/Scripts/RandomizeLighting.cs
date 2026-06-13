@@ -19,10 +19,16 @@ public class RandomizeLighting : MonoBehaviour
         Color fogC   = Color.grey;
         Color amb    = new Color(0.45f, 0.45f, 0.50f);
 
+        // Stadium floodlight settings per weather — dimmed in daylight to preserve
+        // the pure outdoor look; boosted at night/rain where they become primary fill.
+        float stadiumInt   = 0.3f;
+        float stadiumRange = 200f;
+
         switch (w)
         {
             case Weather.Clear:
-                elev = Random.Range(35f, 70f);
+                elev       = Random.Range(35f, 70f);
+                stadiumInt = 0.3f;
                 break;
 
             case Weather.Cloudy:
@@ -30,6 +36,7 @@ public class RandomizeLighting : MonoBehaviour
                 sunInt = 0.40f;
                 amb    = new Color(0.30f, 0.30f, 0.35f);
                 fogOn  = true; fogD = 0.003f; fogC = new Color(0.65f, 0.65f, 0.70f);
+                stadiumInt = 1.2f;
                 break;
 
             case Weather.Foggy:
@@ -37,6 +44,7 @@ public class RandomizeLighting : MonoBehaviour
                 sunInt = 0.25f;
                 amb    = new Color(0.25f, 0.25f, 0.28f);
                 fogOn  = true; fogD = 0.025f; fogC = new Color(0.78f, 0.78f, 0.80f);
+                stadiumInt = 2.0f;
                 break;
 
             case Weather.Rainy:
@@ -45,13 +53,20 @@ public class RandomizeLighting : MonoBehaviour
                 amb    = new Color(0.18f, 0.20f, 0.26f);
                 fogOn  = true; fogD = 0.012f; fogC = new Color(0.42f, 0.45f, 0.52f);
                 SpawnRain();
+                stadiumInt = 3.0f;
                 break;
 
             case Weather.Night:
                 elev   = 210f;
                 sunInt = 0f;
-                amb    = new Color(0.04f, 0.05f, 0.10f);
+                // Raised from (0.04, 0.05, 0.10) — still dark/blue but sections stay
+                // navigable; the stadium floods are the primary fill at night.
+                amb    = new Color(0.10f, 0.12f, 0.18f);
                 fogOn  = true; fogD = 0.006f; fogC = new Color(0.02f, 0.03f, 0.07f);
+                stadiumInt   = 6.0f;
+                // Extend range so all sections (furthest ~191 u from nearest corner)
+                // receive meaningful fill rather than sitting at the falloff edge.
+                stadiumRange = 280f;
                 break;
         }
 
@@ -75,6 +90,22 @@ public class RandomizeLighting : MonoBehaviour
 
         RenderSettings.ambientMode  = UnityEngine.Rendering.AmbientMode.Flat;
         RenderSettings.ambientLight = amb;
+
+        AdjustStadiumLights(stadiumInt, stadiumRange);
+    }
+
+    // Scale every Light under the StadiumLights GameObject to match the weather mood.
+    // ArUco corridor lights (under ArUcoMaze) are intentionally left untouched so
+    // markers remain readable regardless of outdoor conditions.
+    void AdjustStadiumLights(float intensity, float range)
+    {
+        var sl = GameObject.Find("StadiumLights");
+        if (sl == null) return;
+        foreach (var lt in sl.GetComponentsInChildren<Light>())
+        {
+            lt.intensity = intensity;
+            lt.range     = range;
+        }
     }
 
     void SpawnRain()

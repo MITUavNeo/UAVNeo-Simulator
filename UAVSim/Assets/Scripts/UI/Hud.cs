@@ -260,6 +260,14 @@ public class Hud : ScreenManager, IAutograderHud
     private Color speedActiveColor = new Color(0.30f, 0.85f, 0.45f, 0.95f);
     private Color blockOffColor = new Color(0.12f, 0.15f, 0.20f, 0.5f);
 
+    // ── Autograder task checklist ──
+    private GameObject checklistPanel;
+    private Text[]     checklistRowTexts;
+    private string[]   checklistTaskNames;
+    private static readonly Color checklistDoneColor    = new Color(0.30f, 0.85f, 0.45f, 1f);
+    private static readonly Color checklistActiveColor  = new Color(1.00f, 0.85f, 0.20f, 1f);
+    private static readonly Color checklistPendingColor = new Color(0.60f, 0.60f, 0.60f, 0.8f);
+
     // ── Overhead minimap components ──
     private Camera minimapCamera;
     private RenderTexture minimapRT;
@@ -328,6 +336,16 @@ public class Hud : ScreenManager, IAutograderHud
 
         // --- Create overhead minimap ---
         CreateMinimap();
+
+        // --- Subscribe to autograder checklist events ---
+        AutograderManager.OnChecklistInit += InitChecklist;
+        AutograderManager.OnTaskCompleted += CompleteChecklistTask;
+    }
+
+    private void OnDestroy()
+    {
+        AutograderManager.OnChecklistInit -= InitChecklist;
+        AutograderManager.OnTaskCompleted -= CompleteChecklistTask;
     }
 
     /// <summary>
@@ -391,6 +409,122 @@ public class Hud : ScreenManager, IAutograderHud
         }
         if (speedBarLabel != null)
             speedBarLabel.text = $"{speed:F1}";
+    }
+
+    /// <summary>
+    /// Builds the task-checklist panel in the upper-left corner.
+    /// Fired by AutograderManager.OnChecklistInit when the user starts their program.
+    /// </summary>
+    private void InitChecklist(string[] names)
+    {
+        if (this.checklistPanel != null)
+            Destroy(this.checklistPanel);
+
+        this.checklistTaskNames = names;
+
+        Transform canvasRoot = this.transform;
+        while (canvasRoot.parent != null && canvasRoot.parent.GetComponent<Canvas>() != null)
+            canvasRoot = canvasRoot.parent;
+
+        Font uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if (uiFont == null) uiFont = Font.CreateDynamicFontFromOSFont("Arial", 11);
+
+        // Background panel — upper-left, to the left of the minimap
+        this.checklistPanel = new GameObject("ChecklistPanel");
+        this.checklistPanel.layer = 5;
+        RectTransform panelRect = this.checklistPanel.AddComponent<RectTransform>();
+        panelRect.SetParent(canvasRoot, false);
+        panelRect.anchorMin = new Vector2(0.01f, 0.62f);
+        panelRect.anchorMax = new Vector2(0.22f, 0.98f);
+        panelRect.anchoredPosition = Vector2.zero;
+        panelRect.sizeDelta = Vector2.zero;
+
+        RawImage bg = this.checklistPanel.AddComponent<RawImage>();
+        bg.color = new Color(0f, 0f, 0f, 0.70f);
+        bg.raycastTarget = false;
+
+        // Rows: 1 title + N tasks
+        int total = names.Length + 1;
+        float rowH = 1f / total;
+
+        // Title row
+        GameObject titleObj = new GameObject("Title");
+        titleObj.layer = 5;
+        RectTransform titleRect = titleObj.AddComponent<RectTransform>();
+        titleRect.SetParent(panelRect, false);
+        titleRect.anchorMin = new Vector2(0.03f, 1f - rowH);
+        titleRect.anchorMax = new Vector2(0.97f, 1.00f);
+        titleRect.anchoredPosition = Vector2.zero;
+        titleRect.sizeDelta = Vector2.zero;
+        Text titleTxt = titleObj.AddComponent<Text>();
+        titleTxt.text = "GRAND PRIX TASKS";
+        titleTxt.font = uiFont;
+        titleTxt.fontSize = 14;
+        titleTxt.fontStyle = FontStyle.Bold;
+        titleTxt.color = new Color(0.31f, 0.76f, 0.97f);
+        titleTxt.alignment = TextAnchor.MiddleCenter;
+        titleTxt.resizeTextForBestFit = true;
+        titleTxt.resizeTextMinSize = 7;
+        titleTxt.resizeTextMaxSize = 16;
+
+        // Task rows
+        this.checklistRowTexts = new Text[names.Length];
+        for (int i = 0; i < names.Length; i++)
+        {
+            float yMax = 1f - rowH * (i + 1);
+            float yMin = 1f - rowH * (i + 2);
+
+            GameObject rowObj = new GameObject($"Row_{i}");
+            rowObj.layer = 5;
+            RectTransform rowRect = rowObj.AddComponent<RectTransform>();
+            rowRect.SetParent(panelRect, false);
+            rowRect.anchorMin = new Vector2(0.05f, yMin);
+            rowRect.anchorMax = new Vector2(0.97f, yMax);
+            rowRect.anchoredPosition = Vector2.zero;
+            rowRect.sizeDelta = Vector2.zero;
+
+            Text rowTxt = rowObj.AddComponent<Text>();
+            rowTxt.font = uiFont;
+            rowTxt.fontSize = 12;
+            rowTxt.alignment = TextAnchor.MiddleLeft;
+            rowTxt.resizeTextForBestFit = true;
+            rowTxt.resizeTextMinSize = 6;
+            rowTxt.resizeTextMaxSize = 14;
+
+            if (i == 0)
+            {
+                rowTxt.text = $"[>] {names[i]}";
+                rowTxt.color = checklistActiveColor;
+            }
+            else
+            {
+                rowTxt.text = $"[ ] {names[i]}";
+                rowTxt.color = checklistPendingColor;
+            }
+
+            this.checklistRowTexts[i] = rowTxt;
+        }
+    }
+
+    /// <summary>
+    /// Marks the completed row green and advances the active highlight to the next row.
+    /// Fired by AutograderManager.OnTaskCompleted.
+    /// </summary>
+    private void CompleteChecklistTask(int completedIdx)
+    {
+        if (this.checklistRowTexts == null ||
+            completedIdx < 0 || completedIdx >= this.checklistRowTexts.Length)
+            return;
+
+        this.checklistRowTexts[completedIdx].text  = $"[x] {this.checklistTaskNames[completedIdx]}";
+        this.checklistRowTexts[completedIdx].color = checklistDoneColor;
+
+        int next = completedIdx + 1;
+        if (next < this.checklistRowTexts.Length)
+        {
+            this.checklistRowTexts[next].text  = $"[>] {this.checklistTaskNames[next]}";
+            this.checklistRowTexts[next].color = checklistActiveColor;
+        }
     }
 
     /// <summary>
