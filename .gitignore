@@ -65,3 +65,13 @@ sysinfo.txt
 crashlytics-build.properties
 
 Assets/Imported/
+
+# Local context / session docs (not part of the Unity project)
+context_files/
+debug_screenshots/
+mod2errors_piazza/
+ai_agents_comms_channel/
+CLAUDE.md
+UAVSim/bounds_query.json
+UAVSim/Assets/_Recovery/
+UAVSim/Assets/_Recovery.meta
