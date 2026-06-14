@@ -495,7 +495,8 @@ public class LevelManager : MonoBehaviour
                 break;
 
             case LevelManagerMode.Autograder:
-                this.autograderManager = GetComponentInChildren<AutograderManager>();
+                this.autograderManager = GetComponentInChildren<AutograderManager>()
+                    ?? FindObjectOfType<AutograderManager>();
 
                 // First autograder trial for level: set build index, wait for user to start
                 if (LevelManager.cachedPythonInterface == null)

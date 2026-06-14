@@ -105,95 +105,18 @@ public class LevelCollection
                 {
                     DisplayName = "Module 2 - Drone Control",
                     BuildIndex = 10,
-                    HelpMessage = "Fly through all 4 gates in order! Gates are color-coded: Blue (1), Green (2), Yellow (3), Red (4). Each gate is at a different altitude.",
+                    HelpMessage = "Fly through all 12 gates in order! Gates are numbered 1–12 and placed at different positions and altitudes throughout the course.",
                     AutograderBuildIndex = 11,
                     AutograderLevelCode = "mod2gates",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
                         {
-                            Title = "Module 2 - Gate 1",
-                            Description = "Fly through Gate 1 (Blue).",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 2",
-                            Description = "Fly through Gate 2 (Green).",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 3",
-                            Description = "Fly through Gate 3 (Yellow).",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 4",
-                            Description = "Fly through Gate 4 (Red).",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 5",
-                            Description = "Fly through Gate 5.",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 6",
-                            Description = "Fly through Gate 6.",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 7",
-                            Description = "Fly through Gate 7.",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 8",
-                            Description = "Fly through Gate 8.",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 9",
-                            Description = "Fly through Gate 9.",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 10",
-                            Description = "Fly through Gate 10.",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 11",
-                            Description = "Fly through Gate 11.",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate 12",
-                            Description = "Fly through Gate 12.",
-                            MaxPoints = 1,
-                            TimeLimit = 120
-                        },
+                            Title = "Module 2 - Gate Run",
+                            Description = "Fly through all 12 gates of the course in order (Gate 1 → Gate 12).",
+                            MaxPoints = 12,
+                            TimeLimit = 300
+                        }
                     }
                 },
                 new LevelInfo()

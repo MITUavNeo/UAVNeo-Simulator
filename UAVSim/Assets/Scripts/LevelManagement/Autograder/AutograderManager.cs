@@ -10,7 +10,7 @@ public class AutograderManager : MonoBehaviour
     /// <summary>
     /// The build index of the level which displays a summary of an autograder run.
     /// </summary>
-    public const int AutograderSummaryBuildIndex = 25;
+    public const int AutograderSummaryBuildIndex = 3;
     #endregion
 
     #region Public Interface
@@ -161,7 +161,12 @@ public class AutograderManager : MonoBehaviour
     private void Awake()
     {
         AutograderManager.instance = this;
-        this.tasks = this.GetComponentsInChildrenOrdered<AutograderTask>();
+        List<AutograderTask> taskList = new List<AutograderTask>();
+        foreach (var root in this.gameObject.scene.GetRootGameObjects())
+        {
+            taskList.AddRange(root.GetComponentsInChildren<AutograderTask>());
+        }
+        this.tasks = taskList.ToArray();
     }
 
     private void Start()
