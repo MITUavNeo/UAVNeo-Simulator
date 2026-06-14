@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "ai-game-developer": {
+      "type": "http",
+      "url": "http://localhost:25408",
+      "headers": {
+        "Authorization": "Bearer YMk9EusA-PGVhcwUZS9d-nYKV9sfhjGPxXG35Fc161Y"
+      }
+    },
+    "ai-game-developer-racecar": {
+      "type": "http",
+      "url": "http://100.120.228.4:24755",
+      "headers": {
+        "Authorization": "Bearer eStTb1mUOw_yMpG4S_WqvzuYa1qtdypIWCtghUDuVvw"
+      }
+    }
+  }
+}

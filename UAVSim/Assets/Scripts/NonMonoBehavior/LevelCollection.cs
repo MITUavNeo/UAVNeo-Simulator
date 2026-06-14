@@ -240,6 +240,42 @@ public class LevelCollection
                 },
             }
         },
+
+        new LevelCollection()
+        {
+            DisplayName = "Final Challenge",
+            ShortName = "Final",
+            Levels = new LevelInfo[]
+            {
+                new LevelInfo()
+                {
+                    DisplayName = "2026 Final UAV",
+                    BuildIndex = 26,
+                    HelpMessage = "The Beaver Warrior Challenge! Complete all 9 tasks in order: Figure-8 → Gate Run → ArUco Maze → Aerial Slalom → Tunnel → Speed Corridor → SAR Detect → SAR Land → Line Following.",
+                    AutograderBuildIndex = 27,
+                    AutograderLevelCode = "grandprix",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Grand Prix",
+                            Description = "Complete all 9 tasks in order: Figure-8 → Gate Run → ArUco Maze → Aerial Slalom → Tunnel → Speed Corridor → SAR Detect → SAR Land → Line Following. 5 pts per task.",
+                            MaxPoints = 45,
+                            TimeLimit = 720,
+                            TimeBonuses = new Vector2[]
+                            {
+                                new Vector2(300, 3),
+                                new Vector2(360, 2),
+                                new Vector2(480, 1),
+                                new Vector2(600, 0),
+                                new Vector2(660, -1),
+                                new Vector2(float.PositiveInfinity, -3)
+                            }
+                        }
+                    }
+                },
+            }
+        },
     };
     #endregion
 

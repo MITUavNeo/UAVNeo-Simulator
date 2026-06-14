@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -14,6 +15,17 @@ public class AutograderManager : MonoBehaviour
     #endregion
 
     #region Public Interface
+    /// <summary>
+    /// Fired from HandleStart with the ordered list of task display names so the HUD
+    /// can build a checklist panel. Names have the "Task_" prefix stripped.
+    /// </summary>
+    public static event Action<string[]> OnChecklistInit;
+
+    /// <summary>
+    /// Fired from CompleteTask with the 0-based index of the task that just finished.
+    /// </summary>
+    public static event Action<int> OnTaskCompleted;
+
     /// <summary>
     /// The score for each completed level in the current autograder run.
     /// </summary>
@@ -44,7 +56,9 @@ public class AutograderManager : MonoBehaviour
             task.Disable();
             AutograderManager.instance.levelScore += task.Points;
             AutograderManager.instance.hud.UpdateScore(AutograderManager.instance.levelScore, AutograderManager.LevelInfo.MaxPoints);
+            int justCompleted = AutograderManager.instance.taskIndex;
             AutograderManager.instance.taskIndex++;
+            AutograderManager.OnTaskCompleted?.Invoke(justCompleted);
             if (AutograderManager.instance.taskIndex >= AutograderManager.instance.tasks.Length)
             {
                 if (!AutograderManager.LevelInfo.DoNotProceedUntilStopped)
@@ -71,6 +85,12 @@ public class AutograderManager : MonoBehaviour
     {
         this.startTime = Time.time;
         this.hud = hud;
+
+        // Build display names and notify HUD checklist
+        var names = new string[this.tasks.Length];
+        for (int i = 0; i < this.tasks.Length; i++)
+            names[i] = this.tasks[i].gameObject.name.Replace("Task_", "");
+        AutograderManager.OnChecklistInit?.Invoke(names);
         this.hud.SetLevelInfo(AutograderManager.levelIndex, AutograderManager.LevelInfo.Title, AutograderManager.LevelInfo.Description);
         this.hud.UpdateScore(this.levelScore, AutograderManager.LevelInfo.MaxPoints);
         this.hud.UpdateTime(0, AutograderManager.LevelInfo.TimeLimit);
