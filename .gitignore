@@ -75,3 +75,11 @@ CLAUDE.md
 UAVSim/bounds_query.json
 UAVSim/Assets/_Recovery/
 UAVSim/Assets/_Recovery.meta
+
+# AI/MCP-generated debug artifacts (not part of the Unity project)
+UAVSim/Diagrams/
+UAVSim/GeneratedAssets/
+UAVSim/Assets/Plans/
+UAVSim/Assets/Plans.meta
+UAVSim/Assets/cartoon_route_temp.png
+UAVSim/Assets/cartoon_route_temp.png.meta

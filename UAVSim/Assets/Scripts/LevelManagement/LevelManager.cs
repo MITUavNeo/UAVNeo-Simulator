@@ -95,6 +95,12 @@ public class LevelManager : MonoBehaviour
     public static int NumPlayers = 1;
 
     /// <summary>
+    /// Set to true by GrandPrixEnvironmentLoader before additively loading an exploration scene.
+    /// Causes any duplicate LevelManager in the additively loaded scene to self-destruct.
+    /// </summary>
+    public static bool IsAdditiveEnvironment = false;
+
+    /// <summary>
     /// True if the current simulation is an evaluation run.
     /// </summary>
     public static LevelManagerMode LevelManagerMode;
@@ -466,6 +472,14 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
+        // Additive environment load: a GrandPrixEnvironmentLoader loaded this scene on top of the
+        // autograder scene. The autograder's LevelManager is already set as instance — destroy this one.
+        if (LevelManager.instance != null && LevelManager.IsAdditiveEnvironment)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
         // If the level info has a negative build index, it was never set, meaning we did not start from the main menu
         // Thus, we should return directly to the main menu
         if (LevelManager.LevelInfo.BuildIndex < 0)
@@ -495,7 +509,8 @@ public class LevelManager : MonoBehaviour
                 break;
 
             case LevelManagerMode.Autograder:
-                this.autograderManager = GetComponentInChildren<AutograderManager>();
+                this.autograderManager = GetComponentInChildren<AutograderManager>()
+                    ?? FindFirstObjectByType<AutograderManager>();
 
                 // First autograder trial for level: set build index, wait for user to start
                 if (LevelManager.cachedPythonInterface == null)

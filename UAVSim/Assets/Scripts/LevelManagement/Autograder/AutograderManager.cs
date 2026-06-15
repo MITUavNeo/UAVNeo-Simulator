@@ -11,7 +11,7 @@ public class AutograderManager : MonoBehaviour
     /// <summary>
     /// The build index of the level which displays a summary of an autograder run.
     /// </summary>
-    public const int AutograderSummaryBuildIndex = 25;
+    public const int AutograderSummaryBuildIndex = 3;
     #endregion
 
     #region Public Interface

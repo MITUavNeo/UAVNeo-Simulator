@@ -351,6 +351,33 @@ public class LevelCollection
                         }
                     }
                 },
+                new LevelInfo()
+                {
+                    DisplayName = "demo_additive_autograder",
+                    BuildIndex = 26,
+                    HelpMessage = "POC: Additive scene loading — exploration environment + autograder task layer as separate scenes.",
+                    AutograderBuildIndex = 28,
+                    AutograderLevelCode = "grandprix_additive",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Grand Prix (Additive Demo)",
+                            Description = "Complete all 9 tasks in order. Environment loaded additively from GrandPrix exploration scene.",
+                            MaxPoints = 45,
+                            TimeLimit = 720,
+                            TimeBonuses = new Vector2[]
+                            {
+                                new Vector2(300, 3),
+                                new Vector2(360, 2),
+                                new Vector2(480, 1),
+                                new Vector2(600, 0),
+                                new Vector2(660, -1),
+                                new Vector2(float.PositiveInfinity, -3)
+                            }
+                        }
+                    }
+                },
             }
         },
     };
