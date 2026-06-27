@@ -22,12 +22,19 @@ UAVSim is a Unity-based simulator for an educational quadrotor drone. It pairs w
 
 See [CHANGELOG.md](./CHANGELOG.md) for a full version history. Highlights:
 
+- **v1.0.0** - Redesign efforts to labs, autograder, UI, and curriculum. Arena prefab added
+  to reinforce theming, as well as standardizing lighting to prevent unwanted scene bakes.
+  Scenes are now procedurally generated on start, including the ones within the autograder.
+  Cleaned up remaining racecar prefabs and assets that are no longer used.
+  
 - **v0.0.3** — Module 6, autograder integration, and a major refactor that finishes
   the migration from RACECAR Neo (class renames, folder reorg, LIDAR/Drive/IMU
   bandaid removal, Hud refactor, Unity 6 API cleanup, ~1700-file racecar asset purge).
+  
 - **v0.0.2** — AirSim Labs integration: Modules 1–5 scenes (HelloDrone, DroneControl,
   ObjectDetection, ArUcoMaze, SearchAndRescue, MazeNavigation) and updated drone
   flight behavior. Merged via [PR #1](https://github.com/MITUavNeo/UAVNeo-Simulator/pull/1).
+  
 - **v0.0.1** — Initial beta release; Unity project import forked from RACECAR Neo
   Simulator with AR markers, tape patterns, and base drone player prefab.
 
