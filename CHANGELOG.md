@@ -5,6 +5,64 @@ All notable changes to UAVSim are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-06-27
+
+First standalone release of the UAV/drone simulator. Replaces the inherited
+racecar labs with a purpose-built, spiral-curriculum drone course (Labs A–I +
+Grand Prix) and an autograder that scores students against runtime-generated
+challenges.
+
+### Added
+- **Lab curriculum (A–I + Grand Prix).** Spiral-curriculum lab scenes scaffolded
+  from a shared arena template, each with an exploration scene plus graded tiers:
+  - Lab A — drone control: four-course exploration, gate prefab, E-key spawn
+    rotation, final stable-park stop zone.
+  - Lab B — Vent Challenge: exploration scene, stoplight system, runtime path
+    randomizer.
+  - Lab C — line following: modular track-piece kit and runtime track generator
+    (intersections, color-priority, maze paths with false branches).
+  - Lab D — gate navigation: exploration gate select + colour-cycle, reworked
+    cardinal courses, gate generator.
+  - Lab E — gates-and-lines combined runtime generator.
+  - Lab F — drone slalom runtime generator + tier scenes (first pass).
+- **Autograder system.** Per-lab runtime challenge generators, tier scenes,
+  one-line HUD timer, and a themed AutograderSummary results screen.
+- **Drone Arena environment.** Enclosed arena scene template (`DroneArenaTemplate`)
+  with shared materials/lighting, industrial warehouse detailing, and a circular
+  landing pad with a raised center collider.
+- **New drone airframe.** `uav-neo-2` model swapped into a consolidated single
+  drone player prefab.
+- **Main menu redesign.** Dark-industrial theme across the menu and sub-screens,
+  N/E/S/W neon course identity, hero/beaver UI art, and a documented design system.
+- **HUD overhead map.** Gate icons and self-coloring position markers.
+- **Optical Flow sandbox world** for testing navigation algorithms.
+- **Debug overlay.** Flight-scene FPS / system-status readout.
+- **Documentation.** v1.0.0 curriculum brief and a developer guide for the lab
+  build system.
+
+### Changed
+- Standardized lighting across all scenes (Sun intensity 0.5, y=20, no-bake).
+- Converted the Demo and sandbox worlds into the enclosed Arena.
+- Hid Labs F–I and Grand Prix in the menu for the v1.0.0 release scope.
+- Moved dev tooling into `Scripts/` and routed render output to `tmp/`.
+
+### Removed
+- Procedural scene/prefab builders and their `UAVNeo` editor menus (output baked
+  into authored scenes/prefabs).
+- Outdated lab scenes, baked lighting data, the stale FlightDemo fork, the unused
+  LabLighting asset, and a duplicate drone prefab.
+- Disabled vestigial racecar UI (car-customization pickers, racecar logo, racing
+  title).
+
+### Fixed
+- Raised the drone spawn point so the new `uav-neo-2` airframe rests on the spawn
+  pad instead of clipping through and shoving the floor.
+- Autograder: deterministic FPS sampling, summary indexing, summary layout, and
+  HUD corrections; dropped a carried-over Button-A arm press in Labs B–F.
+- Overhead-map markers now self-color and no longer edge-clamp.
+- Grand Prix no longer enters an unfinished race mode.
+- Menu Exit/Cancel buttons.
+
 ## [0.0.3] - 2026-05-03
 
 Module 6, autograder integration, and a major refactor that finishes the migration
