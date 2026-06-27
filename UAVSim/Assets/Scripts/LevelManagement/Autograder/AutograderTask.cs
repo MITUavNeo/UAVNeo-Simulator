@@ -20,6 +20,15 @@ public class AutograderTask : MonoBehaviour
     public float Points { get { return this.points; } }
 
     /// <summary>
+    /// Sets this task's point value. Used by runtime task builders (e.g. <see cref="TrackGenerator"/>)
+    /// that create checkpoints/finishes on the fly and distribute a level's points across them.
+    /// </summary>
+    public void SetPoints(float points)
+    {
+        this.points = points;
+    }
+
+    /// <summary>
     /// Called when the task is ready to be completed.
     /// </summary>
     public virtual void Enable()

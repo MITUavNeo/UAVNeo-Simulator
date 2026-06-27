@@ -32,7 +32,7 @@ public class AutograderSummary : MonoBehaviour
     /// <summary>
     /// The width of a level entry divided by the space between two level entries.
     /// </summary>
-    private const int entryWidthToBufferRatio = 3;
+    private const int entryWidthToBufferRatio = 6;
 
     /// <summary>
     /// The fraction of the container that a single level entry should take up.
@@ -167,8 +167,10 @@ public class AutograderSummary : MonoBehaviour
         {
             GameObject entry = GameObject.Instantiate(this.levelEntry, Vector3.zero, Quaternion.identity);
 
-            // Set uiEntry's anchor points inside of the container
-            entry.transform.SetParent(this.levelEntryContainer.transform);
+            // Set uiEntry's anchor points inside of the container.
+            // worldPositionStays:false keeps the entry's local scale (1) — otherwise the
+            // CanvasScaler's canvas scale shrinks every row, making them tiny and narrow.
+            entry.transform.SetParent(this.levelEntryContainer.transform, false);
             RectTransform rect = entry.GetComponent<RectTransform>();
             rect.anchorMax = new Vector2(1 - AutograderSummary.entryXBuffer, anchorY);
             anchorY -= entryHeight;

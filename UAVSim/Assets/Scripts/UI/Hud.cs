@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -139,24 +140,30 @@ public class Hud : ScreenManager, IAutograderHud
 
     void IAutograderHud.UpdateTime(float time, float timeLimit)
     {
-        // Update main time directly (replaces base.UpdateTime which used the
-        // inherited texts[] array that Hud no longer populates).
+        // Show elapsed / limit together on a single line, e.g. "8.5 / 30.0",
+        // so the timer reads as one value instead of two separate lines.
         if (this.mainTimeText != null)
-            this.mainTimeText.text = time.ToString("F3");
+        {
+            this.mainTimeText.text = $"{time:F1} / {timeLimit:F1}";
 
-        if (time >= timeLimit)
-        {
-            this.mainTimeText.color = Color.red;
-        }
-        else if (timeLimit - time < timeLimit * Hud.autograderWarningTimeRatio)
-        {
-            this.mainTimeText.color = Color.yellow;
+            if (time >= timeLimit)
+            {
+                this.mainTimeText.color = Color.red;
+            }
+            else if (timeLimit - time < timeLimit * Hud.autograderWarningTimeRatio)
+            {
+                this.mainTimeText.color = Color.yellow;
+            }
         }
     }
 
     void IAutograderHud.SetMaxTime(float maxTime)
     {
-        this.maxTimeText.text = $"Max: {maxTime:F1}";
+        // The limit is now shown inline with the elapsed time (UpdateTime), so
+        // the secondary line stays empty. It is only populated for bonus/penalty
+        // feedback when a level defines TimeBonuses (see SetTimeBonus).
+        if (this.maxTimeText != null)
+            this.maxTimeText.text = string.Empty;
     }
 
     void IAutograderHud.SetTimeBonus(float maxTime, float bonus, bool isLastBracket)
@@ -267,6 +274,17 @@ public class Hud : ScreenManager, IAutograderHud
     private RectTransform minimapArrowRect;
     private int minimapFrameCounter;
     private const int minimapUpdateInterval = 3; // Only render minimap every 3rd frame
+
+    // ── Overhead-map landmark icons (e.g. gates) ──
+    // Purely a HUD overlay built from MapLandmark world positions; never seen by
+    // the drone's sensor cameras nor exposed to the Python API.
+    private RectTransform minimapFeedRect;
+    private Font minimapFont;
+    private readonly List<RectTransform> minimapLandmarkIcons = new List<RectTransform>();
+    // Pool of UI rects for the floor-line overlay (one per MapLineCourse segment).
+    private readonly List<RectTransform> minimapLineRects = new List<RectTransform>();
+    // World half-extent visible on the minimap; matches the camera's orthographicSize.
+    private const float minimapWorldHalfExtent = 40f;
 
     /// <summary>Max tilt angle for the bar (matches Flight.maxTiltAngle).</summary>
     private const float indicatorMaxPitch = 35f;
@@ -430,6 +448,7 @@ public class Hud : ScreenManager, IAutograderHud
 
         Font uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (uiFont == null) uiFont = Font.CreateDynamicFontFromOSFont("Arial", 11);
+        this.minimapFont = uiFont;
 
         GameObject panelObj = new GameObject("MinimapPanel");
         panelObj.layer = 5;
@@ -479,6 +498,11 @@ public class Hud : ScreenManager, IAutograderHud
         minimapImage = feedObj.AddComponent<RawImage>();
         minimapImage.texture = minimapRT;
         minimapImage.color = Color.white;
+        this.minimapFeedRect = feedRect;
+
+        // Clip overlay children (floor lines, landmark icons, heading arrow) to the map
+        // frame so anything extending past the edge is cut off instead of overflowing.
+        feedObj.AddComponent<RectMask2D>();
 
         // Heading arrow overlay (centered on the minimap)
         GameObject arrowObj = new GameObject("MinimapArrow");
@@ -524,6 +548,201 @@ public class Hud : ScreenManager, IAutograderHud
         if (minimapArrowRect != null)
         {
             minimapArrowRect.localRotation = Quaternion.Euler(0f, 0f, -yaw);
+        }
+
+        // Draw the floor-line course overlay, then gate/landmark icons on top.
+        this.UpdateMinimapLines(dronePosition);
+        this.UpdateMinimapLandmarks(dronePosition);
+    }
+
+    /// <summary>
+    /// Draws an icon on the overhead map for each <see cref="MapLandmark"/> in the
+    /// scene (e.g. gates). The map is north-up and centered on the drone, so a
+    /// landmark's world XZ offset maps directly to the map: world +X is map-right,
+    /// world +Z is map-up. Icons that fall outside the visible window are clamped
+    /// to the map edge so they still indicate direction. This is HUD-only — the
+    /// landmark positions are never given to the drone or the Python sensor API.
+    /// </summary>
+    private void UpdateMinimapLandmarks(Vector3 dronePosition)
+    {
+        if (this.minimapFeedRect == null)
+        {
+            return;
+        }
+
+        List<MapLandmark> landmarks = MapLandmark.Active;
+
+        // Grow the icon pool to cover the current number of landmarks.
+        while (this.minimapLandmarkIcons.Count < landmarks.Count)
+        {
+            GameObject iconObj = new GameObject("MinimapLandmark");
+            iconObj.layer = 5;
+            RectTransform iconRect = iconObj.AddComponent<RectTransform>();
+            iconRect.SetParent(this.minimapFeedRect, false);
+            iconRect.sizeDelta = new Vector2(14f, 14f);
+
+            Text iconText = iconObj.AddComponent<Text>();
+            iconText.text = "◆"; // ◆ filled diamond
+            iconText.font = this.minimapFont;
+            iconText.fontSize = 14;
+            iconText.alignment = TextAnchor.MiddleCenter;
+            iconText.resizeTextForBestFit = true;
+            iconText.resizeTextMinSize = 6;
+            iconText.resizeTextMaxSize = 18;
+            iconText.raycastTarget = false;
+
+            this.minimapLandmarkIcons.Add(iconRect);
+        }
+
+        for (int i = 0; i < this.minimapLandmarkIcons.Count; i++)
+        {
+            RectTransform iconRect = this.minimapLandmarkIcons[i];
+
+            // Hide any surplus icons (a landmark was disabled/destroyed).
+            if (i >= landmarks.Count || landmarks[i] == null)
+            {
+                if (iconRect.gameObject.activeSelf)
+                {
+                    iconRect.gameObject.SetActive(false);
+                }
+                continue;
+            }
+
+            MapLandmark landmark = landmarks[i];
+            Vector3 offset = landmark.transform.position - dronePosition;
+
+            float u = 0.5f + offset.x / (2f * Hud.minimapWorldHalfExtent);
+            float v = 0.5f + offset.z / (2f * Hud.minimapWorldHalfExtent);
+
+            // Only draw the icon while the landmark is within the map view; otherwise
+            // hide it (instead of pinning it to the edge) so it slides into view as the
+            // drone gets near.
+            const float inset = 0.04f;
+            if (u < inset || u > 1f - inset || v < inset || v > 1f - inset)
+            {
+                if (iconRect.gameObject.activeSelf)
+                {
+                    iconRect.gameObject.SetActive(false);
+                }
+                continue;
+            }
+
+            iconRect.anchorMin = new Vector2(u, v);
+            iconRect.anchorMax = new Vector2(u, v);
+            iconRect.anchoredPosition = Vector2.zero;
+            iconRect.GetComponent<Text>().color = landmark.IconColor;
+
+            if (!iconRect.gameObject.activeSelf)
+            {
+                iconRect.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Draws the floor-line course on the overhead map: one thin UI segment per
+    /// <see cref="MapLineCourse.Segment"/>, north-up and centered on the drone (world +X
+    /// is map-right, world +Z is map-up), matching the camera feed and landmark icons.
+    /// HUD-only — the segment data is never given to the drone or the Python sensor API.
+    /// </summary>
+    private void UpdateMinimapLines(Vector3 dronePosition)
+    {
+        if (this.minimapFeedRect == null)
+        {
+            return;
+        }
+
+        float w = this.minimapFeedRect.rect.width;
+        float h = this.minimapFeedRect.rect.height;
+        if (w <= 0f || h <= 0f)
+        {
+            return; // layout not resolved yet (first frame)
+        }
+
+        // Total segment count across all active courses.
+        int total = 0;
+        for (int c = 0; c < MapLineCourse.Active.Count; c++)
+        {
+            if (MapLineCourse.Active[c] != null && MapLineCourse.Active[c].Segments != null)
+            {
+                total += MapLineCourse.Active[c].Segments.Length;
+            }
+        }
+
+        // Grow the pool to cover the current number of segments.
+        while (this.minimapLineRects.Count < total)
+        {
+            GameObject lineObj = new GameObject("MinimapLine");
+            lineObj.layer = 5;
+            RectTransform lineRect = lineObj.AddComponent<RectTransform>();
+            lineRect.SetParent(this.minimapFeedRect, false);
+            lineRect.anchorMin = lineRect.anchorMax = new Vector2(0.5f, 0.5f);
+            lineRect.pivot = new Vector2(0.5f, 0.5f);
+            lineRect.SetAsFirstSibling(); // behind the arrow + landmark icons, above the camera feed
+
+            RawImage lineImg = lineObj.AddComponent<RawImage>();
+            lineImg.raycastTarget = false;
+            this.minimapLineRects.Add(lineRect);
+        }
+
+        const float scale = 1f / (2f * Hud.minimapWorldHalfExtent); // world metres -> normalized map units
+        const float thickness = 2.5f;
+        const float margin = 0.55f;
+        int idx = 0;
+        for (int c = 0; c < MapLineCourse.Active.Count; c++)
+        {
+            MapLineCourse course = MapLineCourse.Active[c];
+            if (course == null || course.Segments == null)
+            {
+                continue;
+            }
+
+            foreach (MapLineCourse.Segment seg in course.Segments)
+            {
+                RectTransform lineRect = this.minimapLineRects[idx];
+
+                float ax = (seg.a.x - dronePosition.x) * scale;
+                float az = (seg.a.y - dronePosition.z) * scale;
+                float bx = (seg.b.x - dronePosition.x) * scale;
+                float bz = (seg.b.y - dronePosition.z) * scale;
+
+                // Skip segments entirely outside the visible window.
+                if ((ax < -margin && bx < -margin) || (ax > margin && bx > margin) ||
+                    (az < -margin && bz < -margin) || (az > margin && bz > margin))
+                {
+                    if (lineRect.gameObject.activeSelf)
+                    {
+                        lineRect.gameObject.SetActive(false);
+                    }
+                    idx++;
+                    continue;
+                }
+
+                Vector2 pa = new Vector2(ax * w, az * h);
+                Vector2 pb = new Vector2(bx * w, bz * h);
+                Vector2 delta = pb - pa;
+                float length = delta.magnitude;
+
+                lineRect.anchoredPosition = (pa + pb) * 0.5f;
+                lineRect.sizeDelta = new Vector2(length + thickness, thickness); // +thickness overlaps joints
+                lineRect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+                lineRect.GetComponent<RawImage>().color = seg.color;
+
+                if (!lineRect.gameObject.activeSelf)
+                {
+                    lineRect.gameObject.SetActive(true);
+                }
+                idx++;
+            }
+        }
+
+        // Hide any surplus pooled rects (a course was disabled/destroyed).
+        for (; idx < this.minimapLineRects.Count; idx++)
+        {
+            if (this.minimapLineRects[idx].gameObject.activeSelf)
+            {
+                this.minimapLineRects[idx].gameObject.SetActive(false);
+            }
         }
     }
 

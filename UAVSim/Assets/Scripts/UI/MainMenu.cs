@@ -234,7 +234,12 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     public void Exit()
     {
+#if UNITY_EDITOR
+        // Application.Quit is a no-op in the Editor, so stop Play mode instead.
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
         Application.Quit(0);
+#endif
     }
 
     /// <summary>

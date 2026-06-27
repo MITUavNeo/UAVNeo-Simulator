@@ -58,7 +58,7 @@ public class LevelCollection
                 {
                     DisplayName = "Drone World",
                     BuildIndex = 4,
-                    HelpMessage = "Press A (1 key) to arm the drone, then fly through gates and obstacles!"
+                    HelpMessage = "Press L to launch the drone, then fly through gates and obstacles!"
                 },
                 new LevelInfo()
                 {
@@ -86,6 +86,12 @@ public class LevelCollection
                     DisplayName = "Long Hallway Sandbox",
                     BuildIndex = 8,
                 },
+                new LevelInfo()
+                {
+                    DisplayName = "Optical Flow Sandbox",
+                    BuildIndex = 62,
+                    HelpMessage = "Press L to launch, then through the scattered gates, using the colored floor to develop and test optical-flow navigation. Press E to rotate the spawn 90 degrees."
+                },
             }
         },
 
@@ -97,149 +103,173 @@ public class LevelCollection
             {
                 new LevelInfo()
                 {
-                    DisplayName = "Module 1 - Hello Drone",
+                    DisplayName = "Lab A - Drone Control",
                     BuildIndex = 9,
-                    HelpMessage = "Take off, hover, and explore! Use the colored cones to orient yourself - Red=North, Blue=East, Green=South, Yellow=West."
-                },
-                new LevelInfo()
-                {
-                    DisplayName = "Module 2 - Drone Control",
-                    BuildIndex = 10,
-                    HelpMessage = "Fly through all 12 gates in order! Gates are numbered 1–12 and placed at different positions and altitudes throughout the course.",
-                    AutograderBuildIndex = 11,
-                    AutograderLevelCode = "mod2gates",
+                    HelpMessage = "Use the L key to launch/land, and the WASD/Arrow Keys to fly around. Press the E key to rotate 90 degrees to spawn at the next course.",
+                    AutograderBuildIndex = 10,
+                    AutograderLevelCode = "laba",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 2 - Gate Run",
-                            Description = "Fly through all 12 gates of the course in order (Gate 1 → Gate 12).",
-                            MaxPoints = 12,
-                            TimeLimit = 300
-                        }
+                        new AutograderLevelInfo() { Title = "A - 1 Gate", Description = "Fly through one gate", MaxPoints = 5, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "B - 3 Gates", Description = "Fly through three gates", MaxPoints = 5, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "X - Walls", Description = "Navigate around the walls", MaxPoints = 5, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Y - Gates and Walls", Description = "Fly through a course of gates and walls", MaxPoints = 5, TimeLimit = 30 },
                     }
                 },
                 new LevelInfo()
                 {
-                    DisplayName = "Module 3a - Object Detection",
-                    BuildIndex = 12,
-                    HelpMessage = "Use your downward camera to detect objects by name (Pineapple, Vase, Hourglass, Cactus, Book). Fly within 6m of your detected target to win!",
-                    AutograderBuildIndex = 13,
-                    AutograderLevelCode = "mod3aobj",
+                    DisplayName = "Lab B - Vent Challenge",
+                    BuildIndex = 14,
+                    HelpMessage = "Navigate through the vents by reading the colored cube at each intersection (Blue = right, Orange = left, Green = straight, Red = stop). Left-click a stoplight to select it, right-click to change its color.",
+                    AutograderBuildIndex = 15,
+                    AutograderLevelCode = "labb",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 3a - Pineapple",
-                            Description = "Locate the Pineapple (BP_PineappleSculpture02_2) and fly within 6m of it.",
-                            MaxPoints = 2,
-                            TimeLimit = 90
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 3a - Vase",
-                            Description = "Locate the Vase (BP_Vase09_2) and fly within 6m of it.",
-                            MaxPoints = 2,
-                            TimeLimit = 90
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 3a - Hourglass",
-                            Description = "Locate the Hourglass (BP_Hourglass01_2) and fly within 6m of it.",
-                            MaxPoints = 2,
-                            TimeLimit = 90
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 3a - Cactus",
-                            Description = "Locate the Cactus (BP_CactusSculpture03_2) and fly within 6m of it.",
-                            MaxPoints = 2,
-                            TimeLimit = 90
-                        },
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 3a - Book",
-                            Description = "Locate the Book (BP_BookGroup08_2) and fly within 6m of it.",
-                            MaxPoints = 2,
-                            TimeLimit = 90
-                        },
+                        new AutograderLevelInfo() { Title = "Right Turn", Description = "Detect the cue and turn right.", MaxPoints = 2, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Left Turn", Description = "Detect the cue and turn left.", MaxPoints = 2, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Go Straight", Description = "Detect the cue and continue straight.", MaxPoints = 2, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "3 Intersections", Description = "Navigate 3 intersections by color.", MaxPoints = 3, TimeLimit = 60 },
+                        new AutograderLevelInfo() { Title = "5 Intersections", Description = "Navigate 5 intersections by color.", MaxPoints = 5, TimeLimit = 60 },
+                        new AutograderLevelInfo() { Title = "10 Intersections", Description = "Navigate 10 intersections by color.", MaxPoints = 6, TimeLimit = 120 },
                     }
                 },
                 new LevelInfo()
                 {
-                    DisplayName = "Module 3b - ArUco Maze",
-                    BuildIndex = 18,
-                    HelpMessage = "Navigate the false-wall maze using ArUco marker IDs. ID 0 = FAKE (can fly through), ID 1 = REAL (solid wall). Reach the blue room to win!",
-                    AutograderBuildIndex = 19,
-                    AutograderLevelCode = "mod3baruco",
+                    DisplayName = "Lab C - Line Follower",
+                    BuildIndex = 21,
+                    HelpMessage = "Follow the colored lines on the floor using RED > GREEN > BLUE color priority. Press the E key to rotate 90 degrees to spawn at the next course.",
+                    AutograderBuildIndex = 22,
+                    AutograderLevelCode = "labc",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 3b - ArUco Maze",
-                            Description = "Read ArUco marker IDs to navigate through the false-wall maze. Reach the red room (z > 38) to win.",
-                            MaxPoints = 10,
-                            TimeLimit = 120
-                        }
+                        new AutograderLevelInfo() { Title = "Straight Line", Description = "Follow a straight line to the end.", MaxPoints = 1, TimeLimit = 20 },
+                        new AutograderLevelInfo() { Title = "Curved Line", Description = "Follow a curved line to the end.", MaxPoints = 2, TimeLimit = 20 },
+                        new AutograderLevelInfo() { Title = "Perpendicular Line", Description = "Handle a perpendicular junction.", MaxPoints = 2, TimeLimit = 20 },
+                        new AutograderLevelInfo() { Title = "Color Priority I", Description = "Choose the correct path by color priority.", MaxPoints = 5, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Color Priority II", Description = "Choose the correct path by color priority (advanced).", MaxPoints = 5, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Floor Maze", Description = "Solve the line-based floor maze.", MaxPoints = 5, TimeLimit = 45 },
                     }
                 },
                 new LevelInfo()
                 {
-                    DisplayName = "Module 4 - Search and Rescue",
-                    BuildIndex = 20,
-                    HelpMessage = "Search the 60x60m area using spiral or lawnmower patterns to locate the orange SAR target. Fly within 3m of the red landing pad to win!",
-                    AutograderBuildIndex = 21,
-                    AutograderLevelCode = "mod4sar",
+                    DisplayName = "Lab D - Gate Navigation",
+                    BuildIndex = 28,
+                    HelpMessage = "Use the AR Tags to autonomously detect and fly through the nearest gates. Use RED > GREEN > BLUE color priority for multiple gates.",
+                    AutograderBuildIndex = 29,
+                    AutograderLevelCode = "labd",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 4 - Search and Rescue",
-                            Description = "Locate the orange SAR target and fly within 3m of the red landing pad.",
-                            MaxPoints = 10,
-                            TimeLimit = 120
-                        }
+                        new AutograderLevelInfo() { Title = "One Gate", Description = "Center on and fly through a single AR-tagged gate.", MaxPoints = 3, TimeLimit = 20 },
+                        new AutograderLevelInfo() { Title = "Two Gates", Description = "Fly through two gates in order.", MaxPoints = 3, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Three Gates", Description = "Fly through three gates in order.", MaxPoints = 4, TimeLimit = 40 },
+                        new AutograderLevelInfo() { Title = "Two Rows of Gates", Description = "Use color priority to fly two rows of gates.", MaxPoints = 5, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Three Rows of Gates", Description = "Use color priority to fly three rows of gates.", MaxPoints = 5, TimeLimit = 40 },
                     }
                 },
                 new LevelInfo()
                 {
-                    DisplayName = "Module 5 - Maze Navigation",
-                    BuildIndex = 22,
-                    HelpMessage = "Navigate the 3-corridor brick maze using distance sensors. Spawn at (-68, 0, 0), use the right-hand rule to reach the green exit marker.",
-                    AutograderBuildIndex = 23,
-                    AutograderLevelCode = "mod5maze",
+                    DisplayName = "Lab E - Gates and Lines",
+                    BuildIndex = 34,
+                    HelpMessage = "Use the lines on the floor to navigate through the course, and use the gates to control your altitude. Use RED > GREEN > BLUE color priority for lines.",
+                    AutograderBuildIndex = 35,
+                    AutograderLevelCode = "labe",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 5 - Maze Navigation",
-                            Description = "Navigate the brick maze from spawn (-68, 0, 0) using the right-hand rule and reach the exit at x >= 16.",
-                            MaxPoints = 10,
-                            TimeLimit = 180
-                        }
+                        new AutograderLevelInfo() { Title = "Simple Track, 1 Gate", Description = "Follow a simple track through one altitude gate.", MaxPoints = 3, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Complex Track, 3 Gates", Description = "Follow a complex track through three altitude gates.", MaxPoints = 3, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Color Priority, 1 Gate", Description = "Use color priority on the line with one gate.", MaxPoints = 4, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "Color Priority, 3 Gates", Description = "Use color priority on the line with three gates.", MaxPoints = 4, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "All-Out Adventure", Description = "Complete the full combined course.", MaxPoints = 6, TimeLimit = 60 },
+                    }
+                },
+                /* --- Hidden for the v1.0.0 release: Labs F–I are not being shipped yet. ---
+                new LevelInfo()
+                {
+                    DisplayName = "Lab F - Drone Slalom",
+                    BuildIndex = 40,
+                    HelpMessage = "State machines: fly left of red, right of blue, above green, and below yellow balls.",
+                    AutograderBuildIndex = 41,
+                    AutograderLevelCode = "labf",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo() { Title = "5 Balls", Description = "Pass 5 balls on the correct side/level by color.", MaxPoints = 5, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "10 Balls", Description = "Pass 10 balls on the correct side/level by color.", MaxPoints = 5, TimeLimit = 60 },
+                        new AutograderLevelInfo() { Title = "5 Balls Curved", Description = "Pass 5 balls along a curved path.", MaxPoints = 5, TimeLimit = 30 },
+                        new AutograderLevelInfo() { Title = "10 Balls Curved", Description = "Pass 10 balls along a curved path.", MaxPoints = 5, TimeLimit = 60 },
                     }
                 },
                 new LevelInfo()
                 {
-                    DisplayName = "Module 6 - Line Following",
-                    BuildIndex = 24,
-                    HelpMessage = "Fly at 1.2 m and use the downward camera to follow the red line. Implement proportional control to stay centered on the F1 circuit!",
-                    AutograderBuildIndex = 25,
-                    AutograderLevelCode = "mod6line",
+                    DisplayName = "Lab G - Dynamic Walls",
+                    BuildIndex = 45,
+                    HelpMessage = "AR reasoning: tag orientation points to a wall; the tag ID says whether it tells the truth or lies (0 truth, 1 lies in y, 2 lies in x, 3 lies diagonal).",
+                    AutograderBuildIndex = 46,
+                    AutograderLevelCode = "labg",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
-                        new AutograderLevelInfo()
-                        {
-                            Title = "Module 6 - Line Following",
-                            Description = "Follow the red line around the F1 circuit. " +
-                                          "Pass T1 (z≥45) → reach east side (x≥55) → reach back straight (z≤-25).",
-                            MaxPoints = 10,
-                            TimeLimit = 120
-                        }
+                        new AutograderLevelInfo() { Title = "1 Gate", Description = "Choose the correct wall through 1 gate set.", MaxPoints = 5, TimeLimit = 150 },
+                        new AutograderLevelInfo() { Title = "2 Gates", Description = "Choose the correct wall through 2 gate sets.", MaxPoints = 5, TimeLimit = 180 },
+                        new AutograderLevelInfo() { Title = "3 Gates", Description = "Choose the correct wall through 3 gate sets.", MaxPoints = 5, TimeLimit = 210 },
+                        new AutograderLevelInfo() { Title = "5 Gates", Description = "Choose the correct wall through 5 gate sets.", MaxPoints = 5, TimeLimit = 240 },
+                    }
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Lab H - Search and Rescue",
+                    BuildIndex = 50,
+                    HelpMessage = "Search algorithms: find the randomly placed object, then land on the pad within the range and time limit.",
+                    AutograderBuildIndex = 51,
+                    AutograderLevelCode = "labh",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo() { Title = "Relaxed", Description = "Find the target and land on the pad (relaxed limits).", MaxPoints = 5, TimeLimit = 240 },
+                        new AutograderLevelInfo() { Title = "Normal", Description = "Find the target and land on the pad (normal limits).", MaxPoints = 5, TimeLimit = 180 },
+                        new AutograderLevelInfo() { Title = "Challenging", Description = "Find the target and land on the pad (challenging limits).", MaxPoints = 5, TimeLimit = 150 },
+                        new AutograderLevelInfo() { Title = "I Am Speed", Description = "Find the target and land on the pad (tight time limit).", MaxPoints = 5, TimeLimit = 90 },
+                    }
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Lab I - Target Follower",
+                    BuildIndex = 55,
+                    HelpMessage = "Continuous tracking: follow a moving target on the floor along a (possibly random) path.",
+                    AutograderBuildIndex = 56,
+                    AutograderLevelCode = "labi",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo() { Title = "Relaxed", Description = "Track the moving target (relaxed speed).", MaxPoints = 5, TimeLimit = 180 },
+                        new AutograderLevelInfo() { Title = "Normal", Description = "Track the moving target (normal speed).", MaxPoints = 5, TimeLimit = 180 },
+                        new AutograderLevelInfo() { Title = "Challenging", Description = "Track the moving target (challenging speed/path).", MaxPoints = 5, TimeLimit = 180 },
+                        new AutograderLevelInfo() { Title = "I Am Speed", Description = "Track the fastest moving target.", MaxPoints = 5, TimeLimit = 180 },
+                    }
+                },
+                --- end hidden Labs F–I --- */
+            }
+        },
+
+        /* --- Hidden for the v1.0.0 release: the Grand Prix capstone draws on Labs F–I, which are not being shipped yet. ---
+        new LevelCollection()
+        {
+            DisplayName = "Grand Prix",
+            ShortName = "GP",
+            Levels = new LevelInfo[]
+            {
+                new LevelInfo()
+                {
+                    DisplayName = "Grand Prix 2026",
+                    BuildIndex = 60,
+                    IsRaceable = false,
+                    HelpMessage = "The capstone: gates and lines, slalom, target following, dynamic walls, and mazes combined.",
+                    AutograderBuildIndex = 61,
+                    AutograderLevelCode = "grandprix",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo() { Title = "Grand Prix 2026", Description = "Complete the full Grand Prix circuit.", MaxPoints = 25, TimeLimit = 300 },
                     }
                 },
             }
         },
+        --- end hidden Grand Prix --- */
     };
     #endregion
 

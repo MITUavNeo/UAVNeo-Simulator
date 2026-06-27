@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fe55c250e53dd341aabbeaf13b2d013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 1917914479416738862, guid: 7e88b5a7a9345d045b2861b441d2d946, type: 3}
+  playerPrefab: {fileID: 4090331970142768510, guid: 7143990034112bd429add730b15f4b05, type: 3}
   hudPrefab: {fileID: 5036299379929912964, guid: 83edf10bfca08844487aa6ca89035791,
     type: 3}
   raceScreenPrefab: {fileID: 7680681115179678183, guid: cce8f4789f4394c47a57232243864afc,

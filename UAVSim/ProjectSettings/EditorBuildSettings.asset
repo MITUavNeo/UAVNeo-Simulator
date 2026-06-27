@@ -33,54 +33,165 @@ EditorBuildSettings:
     path: Assets/Scenes/Sandbox_Worlds/LongHallway.unity
     guid: bf422d8a7dfa9af4baae342e4602e6aa
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Module1_HelloDrone.unity
-    guid: b80296a8ebd1fed49b13baaf93ce6254
+    path: Assets/Scenes/UAVNeo_Labs/LabA_DroneControl.unity
+    guid: be0e27c37083ac09dd5aded3ac7cbe06
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Module2_DroneControl.unity
-    guid: ed1535a95878c7b42ae223d952d27c8e
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabA_DroneControl/LabA_1_OneGate.unity
+    guid: 632ec6b6f3def7f55280f139be435b52
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module2_DroneControl/Mod2_1_GateRun.unity
-    guid: 78547a0c5b5128d448e62810301da453
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabA_DroneControl/LabA_2_TwoGates.unity
+    guid: 225fd1446a332f2e79ad7af41069860d
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Module3_Part1_ObjectDetection.unity
-    guid: 2202b58b4af484d4faa2ab269cf0f8cd
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabA_DroneControl/LabA_3_AroundWall.unity
+    guid: b1bbb7809dc1806793dc288975a495f3
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Book.unity
-    guid: 425114fe5927aaa479617f473afaae94
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabA_DroneControl/LabA_4_GatesAndWalls.unity
+    guid: 4245db50b4c8e1eec8402d2be52d3aa3
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Cactus.unity
-    guid: 0f336dffcf2c6614a87a5ec6358a6bfe
+    path: Assets/Scenes/UAVNeo_Labs/LabB_VentChallenge.unity
+    guid: e41f09f48c834b586bc94135c8bdb7a9
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Hourglass.unity
-    guid: acbc00371fa9e194dae24f69dc6094a9
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabB_VentChallenge/LabB_1_RightTurn.unity
+    guid: 90316984530de95ed3328220b6ebc468
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Pineapple.unity
-    guid: aa1f7191e881df84f9b0b40373affba5
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabB_VentChallenge/LabB_2_LeftTurn.unity
+    guid: 9c39bcaf5c1277d65d90601baf0042b5
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3a_ObjectDetection/Mod3a_Vase.unity
-    guid: af0024037d4fbae46a51ba850fbfe174
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabB_VentChallenge/LabB_3_GoStraight.unity
+    guid: 0e80b6a2280798ec3438e17e36f6d1f9
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Module3_Part2_ArUcoMaze.unity
-    guid: a1b19843be94bdc4eb10527f034e8592
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabB_VentChallenge/LabB_4_ThreeIntersections.unity
+    guid: f730ddc0e8347adcc496c493ab9a685b
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module3b_ArUcoMaze/Mod3b_1_ArUcoMaze.unity
-    guid: ac8439396c293dd4bbf23c88383e2d3d
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabB_VentChallenge/LabB_5_FiveIntersections.unity
+    guid: b1ffa46868b9690b46a296bcafcd2869
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Module4_SearchAndRescue.unity
-    guid: 231efaaa5dce1d14584888a3f516a984
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabB_VentChallenge/LabB_6_TenIntersections.unity
+    guid: 77a0cfa8fc2b3fb85b4f58b098bbf4a4
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module4_SAR/Mod4_1_SAR.unity
-    guid: 327390ee12fa6534faed58e6d33c8089
+    path: Assets/Scenes/UAVNeo_Labs/LabC_LineFollower.unity
+    guid: 03ecbdda35ac45604a751125b97d75c1
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Module5_MazeNavigation.unity
-    guid: d1d5e96a92129f344abaa2e7eeb7dfc5
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabC_LineFollower/LabC_1_StraightLine.unity
+    guid: 76fb616b34357a2ea43acbcb578403c9
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module5_Maze/Mod5_1_Maze.unity
-    guid: ebf095b4aad11404c98b9bb45fb15159
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabC_LineFollower/LabC_2_CurvedLine.unity
+    guid: 4a684c7557d48ff207cc1b684349931e
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Module6_LineFollowing.unity
-    guid: 28039f3f0529f834ea269a1dfbea1373
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabC_LineFollower/LabC_3_PerpendicularLine.unity
+    guid: 0824d17d2d446eec963cfb316b9027de
   - enabled: 1
-    path: Assets/Scenes/UAV_Neo_Labs/Autograder/Module6_LineFollow/Mod6_1_LineFollow.unity
-    guid: d07ff52fb5c96d247aa593f205828487
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabC_LineFollower/LabC_4_ColorPriorityI.unity
+    guid: 1bd265761aad3dffca34e04cfc3139a5
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabC_LineFollower/LabC_5_ColorPriorityII.unity
+    guid: 83d5d458a6ffff3142159b76aef55077
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabC_LineFollower/LabC_6_FloorMaze.unity
+    guid: 7e47a735d2c64c6ec568e9ede9824b51
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/LabD_GateNavigation.unity
+    guid: 20d47be02ff5db89b2afc83ca2ca4229
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabD_GateNavigation/LabD_1_OneGate.unity
+    guid: 62e440955666d66c99a7ad8397ed3b31
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabD_GateNavigation/LabD_2_TwoGates.unity
+    guid: 42b2f3a35a1afffac79473021f3b8e7a
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabD_GateNavigation/LabD_3_ThreeGates.unity
+    guid: 1d7a947602f0ad2c4c457ecb9ae86b5e
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabD_GateNavigation/LabD_4_TwoRows.unity
+    guid: e0e4ad3ddec7e1b459d44f4c6534f560
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabD_GateNavigation/LabD_5_ThreeRows.unity
+    guid: 6fc57710bfa0d65979050126e9ba898b
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/LabE_GatesAndLines.unity
+    guid: d2947c402b5d64bbd61bb921981ddf76
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabE_GatesAndLines/LabE_1_SimpleTrack1Gate.unity
+    guid: 5ee9a44ecf2e36223e27d58d85be5083
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabE_GatesAndLines/LabE_2_ComplexTrack3Gates.unity
+    guid: 380334c478a454bf5aca66073fd45e02
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabE_GatesAndLines/LabE_3_ColorPriority1Gate.unity
+    guid: 532d8fcd0384655c80f71eb8f64aa072
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabE_GatesAndLines/LabE_4_ColorPriority3Gates.unity
+    guid: bac8193ab6c849ba51b3ee93ef9ddc95
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabE_GatesAndLines/LabE_5_AllOutAdventure.unity
+    guid: 0a63f015ca20010185c7909690d7ff1c
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/LabF_DroneSlalom.unity
+    guid: df08f7fbef473363f73b7843677d9fe9
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabF_DroneSlalom/LabF_1_FiveBalls.unity
+    guid: d313cba3d354433f0cfae601f56c53f1
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabF_DroneSlalom/LabF_2_TenBalls.unity
+    guid: 14c9e832bba397262ec9edfb4e816238
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabF_DroneSlalom/LabF_3_FiveBallsCurved.unity
+    guid: e8fb517a8cacd06678bbd70a3aef49c2
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabF_DroneSlalom/LabF_4_TenBallsCurved.unity
+    guid: 9ed66498050607ed0551aac23911d791
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/LabG_DynamicWalls.unity
+    guid: 2c7fb42522c8d8d508e7ab5456aa5c55
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabG_DynamicWalls/LabG_1_OneGate.unity
+    guid: 45f6e4d00ab04ad1e087e9523c62ddbf
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabG_DynamicWalls/LabG_2_TwoGates.unity
+    guid: a3fa79184ffe77541eddece83ac45fd6
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabG_DynamicWalls/LabG_3_ThreeGates.unity
+    guid: b272e112215a2fa482ec74cda2b51a18
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabG_DynamicWalls/LabG_4_FiveGates.unity
+    guid: 835c322d6324fe9ebdd8951a5df628e1
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/LabH_SearchAndRescue.unity
+    guid: a97281ec696dca46784919ab8a5a5563
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabH_SearchAndRescue/LabH_1_Relaxed.unity
+    guid: 2d84c51d23bb1b6ba75bc5c67ab260b0
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabH_SearchAndRescue/LabH_2_Normal.unity
+    guid: f69525ebea450ebafd42ae5dfa83641b
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabH_SearchAndRescue/LabH_3_Challenging.unity
+    guid: b3b84987dde6bf7485632a9d88571a08
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabH_SearchAndRescue/LabH_4_IAmSpeed.unity
+    guid: 623eac61632fd12db7b52f84f98516fa
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/LabI_TargetFollower.unity
+    guid: 4edadcc95db6be9759911a44b1720764
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabI_TargetFollower/LabI_1_Relaxed.unity
+    guid: 3c88c3fa77d1e5fbe7239d22ad968af6
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabI_TargetFollower/LabI_2_Normal.unity
+    guid: f046e98d3fcddfd8187932577df81710
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabI_TargetFollower/LabI_3_Challenging.unity
+    guid: 78b4674c0000bc560c4aacf69bc2408a
+  - enabled: 1
+    path: Assets/Scenes/UAVNeo_Labs/Autograder/LabI_TargetFollower/LabI_4_IAmSpeed.unity
+    guid: 132c94fed393abb42bfe9bb59a22b39c
+  - enabled: 1
+    path: Assets/Scenes/Final_Challenge/GrandPrix.unity
+    guid: 8efc9328acb39e5324aa654406c3516c
+  - enabled: 1
+    path: Assets/Scenes/Final_Challenge/Autograder/GrandPrix2026.unity
+    guid: 50e5db80450e5d140d92a3bf3b120080
+  - enabled: 1
+    path: Assets/Scenes/Sandbox_Worlds/OpticalFlow.unity
+    guid: c0d1e2f30415263748596a7b8c9d0e1f
   m_configObjects: {}

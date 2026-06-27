@@ -329,6 +329,10 @@ public class CameraModule : DroneModule
             this.colorCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
         }
 
+        // Autograder helper geometry (destination/fail/park zones) lives on the UI layer.
+        // Never let the drone's color camera see it, so student vision can't key off the grader.
+        this.colorCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
+
         base.Awake();
     }
 
@@ -352,6 +356,9 @@ public class CameraModule : DroneModule
 
             // Always hide the drone body from the downward camera (it would block the view)
             this.downwardCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
+
+            // Also hide autograder helper geometry (UI layer) from the downward camera.
+            this.downwardCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI"));
         }
     }
 

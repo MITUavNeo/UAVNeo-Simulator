@@ -5,8 +5,8 @@ using UnityEngine;
 ///
 /// HOW IT WORKS
 /// ────────────
-/// BuildF1Track.cs adds a LineTrackPiece marker component to every corner
-/// and straight piece.  On Start() this script finds all LineTrackPiece
+/// Each line-following track piece is manually tagged with a LineTrackPiece
+/// marker component.  On Start() this script finds all LineTrackPiece
 /// objects and sets their material colour using MaterialPropertyBlock —
 /// the approach that works in both Built-in and URP pipelines.
 ///
@@ -62,7 +62,7 @@ public class LineColorRandomizer : MonoBehaviour
 
         int count = 0;
 
-        // Find every piece tagged by BuildF1Track with the LineTrackPiece marker
+        // Find every piece manually tagged with the LineTrackPiece marker
         var pieces = FindObjectsByType<LineTrackPiece>();
         foreach (var piece in pieces)
         {

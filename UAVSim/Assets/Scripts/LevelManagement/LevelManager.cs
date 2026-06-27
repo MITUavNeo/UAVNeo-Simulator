@@ -86,6 +86,24 @@ public class LevelManager : MonoBehaviour
     /// The minimum time scale at which the simulation can run.
     /// </summary>
     private const float minTimeScale = 1.0f / 64.0f;
+
+    /// <summary>
+    /// The height in meters above the ground at which a default start point is
+    /// created when a scene does not author its own KeyPoint. The drone's body
+    /// collider sits flush with the floor at its origin, so spawning exactly at
+    /// y = 0 makes it interpenetrate the floor and settle tilted (skewing the
+    /// camera sensors). A small positive clearance lets it drop and rest level.
+    /// </summary>
+    private const float defaultSpawnHeight = 0.5f;
+
+    /// <summary>
+    /// Extra vertical clearance (meters) added to every authored spawn point. The
+    /// uav-neo-2 airframe's body extends a few cm below the prefab origin, so
+    /// spawning exactly at a scene's KeyPoint height let the bottom clip into and
+    /// shove the floor. This lifts the drone just enough to drop and rest on the
+    /// spawn pad instead of interpenetrating it.
+    /// </summary>
+    private const float spawnClearance = 0.06f;
     #endregion
 
     #region Public Interface
@@ -254,6 +272,14 @@ public class LevelManager : MonoBehaviour
     public static void ResetDrone(int droneIndex)
     {
         Transform resetLocation = LevelManager.instance.GetResetLocation(droneIndex);
+        Vector3 resetPosition = resetLocation.position;
+        Quaternion resetRotation = resetLocation.rotation;
+
+        // In exploration mode, face the drone down the currently-selected cardinal course (E key).
+        if (LevelManager.LevelManagerMode == LevelManagerMode.Exploration)
+        {
+            resetRotation = resetRotation * Quaternion.Euler(0f, 90f * LevelManager.instance.explorationHeadingIndex, 0f);
+        }
 
         // Stop physics first
         Rigidbody droneRigidBody = LevelManager.instance.players[droneIndex].GetComponent<Rigidbody>();
@@ -261,12 +287,12 @@ public class LevelManager : MonoBehaviour
         droneRigidBody.angularVelocity = Vector3.zero;
 
         // Use physics-aware movement methods
-        droneRigidBody.MovePosition(resetLocation.position);
-        droneRigidBody.MoveRotation(resetLocation.rotation);
+        droneRigidBody.MovePosition(resetPosition);
+        droneRigidBody.MoveRotation(resetRotation);
 
         // Backup direct transform setting
-        LevelManager.instance.players[droneIndex].transform.position = resetLocation.position;
-        LevelManager.instance.players[droneIndex].transform.rotation = resetLocation.rotation;
+        LevelManager.instance.players[droneIndex].transform.position = resetPosition;
+        LevelManager.instance.players[droneIndex].transform.rotation = resetRotation;
 
         // Repair drone crash system (restores full health, reattaches all parts)
         CrashSystem crashSystem = LevelManager.instance.players[droneIndex].GetComponentInChildren<CrashSystem>();
@@ -390,6 +416,12 @@ public class LevelManager : MonoBehaviour
     private int[] curKeyPoints;
 
     /// <summary>
+    /// In exploration mode, how many 90-degree turns the spawn heading has been rotated by (E key).
+    /// Used to face the drone down each of the four cardinal courses in turn.
+    /// </summary>
+    private int explorationHeadingIndex = 0;
+
+    /// <summary>
     /// True if the level has been failed.
     /// </summary>
     private bool failed;
@@ -495,8 +527,7 @@ public class LevelManager : MonoBehaviour
                 break;
 
             case LevelManagerMode.Autograder:
-                this.autograderManager = GetComponentInChildren<AutograderManager>()
-                    ?? FindObjectOfType<AutograderManager>();
+                this.autograderManager = GetComponentInChildren<AutograderManager>();
 
                 // First autograder trial for level: set build index, wait for user to start
                 if (LevelManager.cachedPythonInterface == null)
@@ -617,6 +648,20 @@ public class LevelManager : MonoBehaviour
             }
         }
 
+        // In exploration mode, rotate the spawn heading 90 degrees on E key to face the next cardinal course
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (LevelManager.LevelManagerMode == LevelManagerMode.Exploration)
+            {
+                this.explorationHeadingIndex = (this.explorationHeadingIndex + 1) % 4;
+                LevelManager.ResetDrone(0);
+            }
+            else
+            {
+                this.screenManager.ShowWarning("Rotating the drone (E key) is only available in exploration mode.");
+            }
+        }
+
         // Manage race-specific inputs
         if (LevelManager.NumPlayers > 1)
         {
@@ -654,7 +699,7 @@ public class LevelManager : MonoBehaviour
         }
 
         Transform start = this.keyPoints[0].transform;
-        return (start.position + offset, start.rotation);
+        return (start.position + offset + Vector3.up * LevelManager.spawnClearance, start.rotation);
     }
 
     /// <summary>
@@ -916,14 +961,17 @@ public class LevelManager : MonoBehaviour
         this.keyPoints = FindObjectsByType<KeyPoint>();
         Array.Sort(this.keyPoints);
 
-        // If the level does not have a start key point, create and add a default one
+        // If the level does not have a start key point, create and add a default one.
+        // Spawn slightly above the ground so the drone rests level instead of
+        // interpenetrating the floor (see defaultSpawnHeight).
+        Vector3 defaultStartPosition = new Vector3(0, LevelManager.defaultSpawnHeight, 0);
         if (this.keyPoints.Length == 0)
         {
-            this.keyPoints = new KeyPoint[] { GameObject.Instantiate(this.defaultStart, Vector3.zero, Quaternion.identity).GetComponent<KeyPoint>() };
+            this.keyPoints = new KeyPoint[] { GameObject.Instantiate(this.defaultStart, defaultStartPosition, Quaternion.identity).GetComponent<KeyPoint>() };
         }
         else if (this.keyPoints[0].Type != KeyPoint.KeyPointType.Start)
         {
-            KeyPoint start = GameObject.Instantiate(this.defaultStart, Vector3.zero, Quaternion.identity).GetComponent<KeyPoint>();
+            KeyPoint start = GameObject.Instantiate(this.defaultStart, defaultStartPosition, Quaternion.identity).GetComponent<KeyPoint>();
             KeyPoint[] existingKeyPoints = this.keyPoints;
 
             this.keyPoints = new KeyPoint[this.keyPoints.Length + 1];

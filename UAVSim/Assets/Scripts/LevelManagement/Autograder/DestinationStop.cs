@@ -49,8 +49,11 @@ public class DestinationStop : AutograderTask
 
     protected override void Awake()
     {
-        base.Awake();
+        // Cache the material BEFORE base.Awake() runs: base.Awake() disables this
+        // GameObject, after which GetComponentInChildren<Renderer>() would return
+        // null (it skips inactive objects) and throw.
         this.material = this.GetComponentInChildren<Renderer>().material;
+        base.Awake();
     }
 
     private void Start()

@@ -5,7 +5,13 @@ using System.Security.Cryptography;
 /// <summary>
 /// Contains general helpful functions.
 /// </summary>
-public static class Utilities
+/// <remarks>
+/// The autograder AES key lives in a separate, git-ignored partial file
+/// (Utilities.Secret.cs) so the secret never enters source control. Copy
+/// Utilities.Secret.cs.example to Utilities.Secret.cs and fill in the key to
+/// build. See that file for details.
+/// </remarks>
+public static partial class Utilities
 {
     /// <summary>
     /// Encrypts a plaintext message.
@@ -43,7 +49,4 @@ public static class Utilities
 
         return output;
     }
-    
-    // Security!
-    private static readonly byte[] key = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
 }

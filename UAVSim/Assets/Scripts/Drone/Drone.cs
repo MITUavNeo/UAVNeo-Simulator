@@ -95,11 +95,11 @@ public class Drone : MonoBehaviour
     public void DefaultFlightUpdate()
     {
         // ── ARM / LAND TOGGLE ──
-        // A button on controller (or "1" key on keyboard, which is the keyboard
-        // alias for Button.A defined in Controller.cs keyboardButtonMap). This
-        // path is gated to default flight mode by LevelManager — pressing A in
-        // user program mode does not arm the drone.
-        if (Controller.WasPressed(Controller.Button.A))
+        // "L" key (launch/land). Moved off Button.A / "1" so it no longer
+        // conflicts with the A/B/X/Y trial buttons. This path is gated to default
+        // flight mode by LevelManager — pressing L in user program mode does not
+        // arm the drone (program mode launches/lands via the Python API).
+        if (Input.GetKeyDown(KeyCode.L))
         {
             if (!this.Flight.IsArmed)
             {

@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 /// Runs once before any scene loads — no manual setup required.
 ///
 /// Key optimisations:
-///   • VSync OFF  → frame rate no longer capped to 60 Hz
-///   • targetFrameRate = -1  → render as fast as the GPU allows (240+ on decent hardware)
+///   • VSync OFF, targetFrameRate = 60  → fixed, scene-independent frame rate so
+///     Time.deltaTime (used by student PCMD-queue timing) is consistent everywhere
 ///   • Shadow distance reduced for weak GPUs
 ///   • Pixel light count capped
 ///   • LOD bias tuned for balanced quality / perf
@@ -24,11 +24,27 @@ public static class PerformanceOptimizer
     {
         // Register scene-loaded callback for per-camera optimizations
         SceneManager.sceneLoaded += OnSceneLoaded;
+
         // ───────────────────────────────────────────────
-        //  1.  UNLOCK FRAME RATE
+        //  0.  FORCE WINDOWED MODE
         // ───────────────────────────────────────────────
-        QualitySettings.vSyncCount = 0;          // Disable VSync on every quality tier
-        Application.targetFrameRate = -1;         // No cap — render as fast as possible
+        // Unity caches the last resolution and fullscreen state in the Windows
+        // registry under HKCU\Software\<companyName>\<productName>. New build
+        // defaults are ignored once a key exists, so we override at runtime.
+        Screen.SetResolution(1280, 720, FullScreenMode.Windowed);
+
+        // ───────────────────────────────────────────────
+        //  1.  CAP FRAME RATE (determinism across scenes)
+        // ───────────────────────────────────────────────
+        // The frame rate MUST be consistent across scenes: student timing code
+        // (e.g. PCMD command queues) advances on Time.deltaTime via
+        // drone.get_delta_time(), so an uncapped rate makes light scenes (a
+        // single autograder gate) run at hundreds of FPS while heavy scenes
+        // (full exploration courses) run far slower — and the same throttle
+        // sequence then flies differently between them. A fixed cap keeps
+        // get_delta_time() consistent so behavior matches everywhere.
+        QualitySettings.vSyncCount = 0;          // Disable VSync (we set the cap explicitly)
+        Application.targetFrameRate = 60;         // Fixed cap for deterministic, scene-independent timing
 
         // ───────────────────────────────────────────────
         //  2.  AUTO-DETECT HARDWARE TIER
