@@ -173,6 +173,7 @@ public class PythonInterface
         physics_get_gps,           // Get GPS reading (3 floats: latitude, longitude, altitude)
         flight_takeoff,            // Arm and launch; returns bool (true = now armed, false = already armed)
         flight_land,               // Begin landing; returns bool (true = landing initiated, false = not armed or already landing)
+        physics_get_position,      // Get true world position (3 floats: x east, y up, z north, meters)
     }
 
     /// <summary>
@@ -446,6 +447,13 @@ public class PythonInterface
                         Vector3 gps = drone.Physics.GPS;
                         sendData = new byte[sizeof(float) * 3];
                         Buffer.BlockCopy(new float[] { gps.x, gps.y, gps.z }, 0, sendData, 0, sendData.Length);
+                        this.udpClient.Send(sendData, sendData.Length, endPoint);
+                        break;
+
+                    case Header.physics_get_position:
+                        Vector3 position = drone.Physics.Position;
+                        sendData = new byte[sizeof(float) * 3];
+                        Buffer.BlockCopy(new float[] { position.x, position.y, position.z }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 

@@ -133,6 +133,15 @@ public class PhysicsModule : DroneModule
     }
 
     /// <summary>
+    /// The drone's true world position (x east, y up, z north) in meters. This is the
+    /// raw transform position (no GPS lat/lon encoding), so it is exact to float precision.
+    /// </summary>
+    public Vector3 Position
+    {
+        get { return this.transform.position; }
+    }
+
+    /// <summary>
     /// The angular velocity of the drone (in radians/second).
     /// </summary>
     public Vector3 AngularVelocity
