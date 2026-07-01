@@ -273,7 +273,8 @@ public static class Controller
 
         int index = (int)joystick;
         float xAxis = Input.GetAxis(Controller.joystickMap[index][0]);
-        float yAxis = Input.GetAxis(Controller.joystickMap[index][1]);
+        // Joystick Y reads inverted (stick forward = negative); flip so forward = +1, matching the keyboard.
+        float yAxis = -Input.GetAxis(Controller.joystickMap[index][1]);
 
         // If no input, check alternative (keyboard) input
         if (xAxis == 0 && yAxis == 0)
