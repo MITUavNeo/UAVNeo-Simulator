@@ -127,8 +127,8 @@ public static class Controller
 
     private static readonly string[] triggerMap =
     {
-        "9th axis",
-        "10th axis"
+        "3rd axis",
+        "6th axis"
     };
 
     private static readonly string[][] joystickMap =
