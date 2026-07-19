@@ -132,12 +132,11 @@ public class Drone : MonoBehaviour
 
         this.Flight.StrafeSpeed = leftJoy.x;
 
-        // Triggers = vertical movement (ascend/descend)
-        this.Flight.VerticalSpeed = Controller.GetTrigger(Controller.Trigger.RIGHT) - Controller.GetTrigger(Controller.Trigger.LEFT);
-
         // Right joystick X (Arrow Left/Right) = yaw rotation
+        // Right joystick Y (Arrow Up/Down) = vertical movement (ascend/descend)
         Vector2 rightJoy = Controller.GetJoystick(Controller.Joystick.RIGHT);
         this.Flight.YawSpeed = rightJoy.x;
+        this.Flight.VerticalSpeed = Mathf.Abs(rightJoy.y) < 0.1f ? 0f : rightJoy.y;
 
         // Use the bumpers to adjust max speed
         if (Controller.WasPressed(Controller.Button.RB))

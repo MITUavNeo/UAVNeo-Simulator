@@ -82,7 +82,7 @@ public static class Controller
     private static readonly string[][] joystickMap =
     {
         new string[] { "X axis", "Y axis" },
-        new string[] { "4th axis", "5th axis" }
+        new string[] { "4th axis", "3rd axis" }
     };
 #elif MAC
     private static readonly string[] buttonMap =
